@@ -1,7 +1,8 @@
 import pygame
 
 class Car:
-    def __init__(self, x, y):
+    def __init__(self, screen, x, y):
+        self.screen = screen
         self.x = x
         self.y = y
         self.speed = 0
@@ -10,6 +11,7 @@ class Car:
         self.min_speed = -2
         self.width = 30
         self.height = 50
+        self.angle = 0
 
     def update(self):
         self.speed += self.acceleration
@@ -19,12 +21,18 @@ class Car:
             self.speed = self.min_speed
         self.y -= self.speed
 
+    def move_forwards(self):
+        self.y -= 5
+
+    def move_backwards(self):
+        self.y += 5
+
     def move_left(self):
         self.x -= 5
 
     def move_right(self):
         self.x += 5
 
-    def draw(self, surface):
+    def draw(self):
         rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
-        pygame.draw.rect(surface, (255, 0, 0), rect)
+        pygame.draw.rect(self.screen, (255, 0, 0), rect)

@@ -1,4 +1,5 @@
 import pygame
+from car import Car
 
 class Environment:
     def __init__(self):
@@ -14,8 +15,11 @@ class Environment:
         
         # Set background color
         self.bg_color = (230, 230, 230)
+
+        # Creating the Car object
+        self.car = Car(self.screen, self.screen_width/2, self.screen_height/2)
     
-    def draw(self):
+    def draw(self, car):
         # Fill screen with background color
         self.screen.fill(self.bg_color)
         
@@ -75,9 +79,12 @@ class Environment:
             pygame.draw.rect(self.screen, border_color, parking_space_rect, 2)
             space_y += space_height - 2
 
+        self.car.draw()
+
         # Update the screen
         pygame.display.flip()
 
+    """
     def reset(self):
         # Reset environment to initial state
         pass
@@ -85,7 +92,7 @@ class Environment:
     def step(self, action):
         # Take action in environment and observe next state and reward
         pass
-
+    """
     def run(self):
         # Set up the game clock
         clock = pygame.time.Clock()
@@ -102,7 +109,7 @@ class Environment:
                     running = False
             
             # Draw the environment
-            self.draw()
+            self.draw(Car)
             
             # Wait to maintain frame rate
             clock.tick(fps)
