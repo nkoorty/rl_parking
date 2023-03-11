@@ -20,27 +20,63 @@ class Environment:
         self.screen.fill(self.bg_color)
         
         # Set lane and parking space dimensions
-        lane_width = 50
+        lane_width = 80
         lane_height = self.screen_height
-        space_width = 40
-        space_height = 80
+        space_width = 60
+        space_height = 120
         
         # Set colors for lanes and parking spaces
         lane_color = (100, 100, 100)
-        space_color = (255, 255, 255)
+        space_color = (92, 122, 171)
+        line_color = (255, 255, 255)
+        border_color = (255, 255, 0)
+
+        # Left empty space
+        left_empty_space = pygame.Rect(0, 0, (self.screen_width / 2) - lane_width, self.screen_height)
+        pygame.draw.rect(self.screen, (48, 48, 48), left_empty_space)
+
+        # Right empty space
+        right_empty_space = pygame.Rect((self.screen_width / 2) + lane_width, 0, (self.screen_width / 2) - lane_width, self.screen_height)
+        pygame.draw.rect(self.screen, (48, 48, 48), right_empty_space)
         
         # Draw left lane
-        pygame.draw.rect(self.screen, lane_color, (0, 0, lane_width, lane_height))
+        pygame.draw.rect(self.screen, lane_color, ((self.screen_width/2) - (lane_width), 0, lane_width, lane_height))
         
         # Draw right lane
-        pygame.draw.rect(self.screen, lane_color, (self.screen_width - lane_width, 0, lane_width, lane_height))
+        pygame.draw.rect(self.screen, lane_color, ((self.screen_width/2), 0, lane_width, lane_height))
         
-        # Draw parking space
-        pygame.draw.rect(self.screen, space_color, ((self.screen_width - lane_width - space_width), (self.screen_height - space_height) / 2, space_width, space_height))
+        # Draw striped line
+        line_height = 20
+        line_spacing = 10
+        num_lines = int(lane_height / (line_height + line_spacing))
+        line_y = (self.screen_height - num_lines * (line_height + line_spacing)) / 2
+        for i in range(num_lines):
+            line_rect = pygame.Rect((self.screen_width / 2) - 5, line_y, 3, line_height)
+            pygame.draw.rect(self.screen, line_color, line_rect)
+            line_y += line_height + line_spacing
         
+        # Draw multiple parking spaces on the right
+        num_spaces = 4  # Change this value to adjust the number of parking spaces
+        space_x = (self.screen_width / 2) + lane_width 
+        space_y = (self.screen_height - num_spaces * (space_height)) / 2 
+        for i in range(num_spaces):
+            parking_space_rect = pygame.Rect(space_x, space_y, space_width, space_height)
+            pygame.draw.rect(self.screen, space_color, parking_space_rect)
+            pygame.draw.rect(self.screen, border_color, parking_space_rect, 2)
+            space_y += space_height - 2
+
+        # Draw multiple parking spaces on the left
+        num_spaces = 4  # Change this value to adjust the number of parking spaces
+        space_x = (self.screen_width / 2) - lane_width - space_width 
+        space_y = (self.screen_height - num_spaces * (space_height)) / 2  
+        for i in range(num_spaces):
+            parking_space_rect = pygame.Rect(space_x, space_y, space_width, space_height)
+            pygame.draw.rect(self.screen, space_color, parking_space_rect)
+            pygame.draw.rect(self.screen, border_color, parking_space_rect, 2)
+            space_y += space_height - 2
+
         # Update the screen
         pygame.display.flip()
-
 
     def reset(self):
         # Reset environment to initial state
