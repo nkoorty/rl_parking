@@ -17,7 +17,7 @@ class Environment:
         self.bg_color = (230, 230, 230)
 
         # Creating the Car object
-        self.car = Car(self.screen, self.screen_width/2, self.screen_height/2)
+        self.car = Car(self.screen, self.screen_width/2, self.screen_height - 100)
     
     def draw(self, car):
         # Fill screen with background color
@@ -34,6 +34,7 @@ class Environment:
         space_color = (92, 122, 171)
         line_color = (255, 255, 255)
         border_color = (255, 255, 0)
+        target_color = (60, 207, 43)
 
         # Left empty space
         left_empty_space = pygame.Rect(0, 0, (self.screen_width / 2) - lane_width, self.screen_height)
@@ -55,7 +56,7 @@ class Environment:
         num_lines = int(lane_height / (line_height + line_spacing))
         line_y = (self.screen_height - num_lines * (line_height + line_spacing)) / 2
         for i in range(num_lines):
-            line_rect = pygame.Rect((self.screen_width / 2) - 5, line_y, 3, line_height)
+            line_rect = pygame.Rect((self.screen_width / 2) - 1.5, line_y, 3, line_height)
             pygame.draw.rect(self.screen, line_color, line_rect)
             line_y += line_height + line_spacing
         
@@ -64,9 +65,14 @@ class Environment:
         space_x = (self.screen_width / 2) + lane_width 
         space_y = (self.screen_height - num_spaces * (space_height)) / 2 
         for i in range(num_spaces):
-            parking_space_rect = pygame.Rect(space_x, space_y, space_width, space_height)
-            pygame.draw.rect(self.screen, space_color, parking_space_rect)
-            pygame.draw.rect(self.screen, border_color, parking_space_rect, 2)
+            if i == 1:
+                parking_space_rect = pygame.Rect(space_x, space_y, space_width, space_height)
+                pygame.draw.rect(self.screen, space_color, parking_space_rect)
+                pygame.draw.rect(self.screen, target_color, parking_space_rect, 2)
+            else:
+                parking_space_rect = pygame.Rect(space_x, space_y, space_width, space_height)
+                pygame.draw.rect(self.screen, space_color, parking_space_rect)
+                pygame.draw.rect(self.screen, border_color, parking_space_rect, 2)
             space_y += space_height - 2
 
         # Draw multiple parking spaces on the left
@@ -107,9 +113,21 @@ class Environment:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-            
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_UP]:
+                self.car.move_forwards()
+            elif keys[pygame.K_DOWN]:
+                self.car.move_backwards()
+            elif keys[pygame.K_RIGHT]:
+                self.car.move_right()
+            elif keys[pygame.K_LEFT]:
+                self.car.move_left()  
+            else:
+                self.car.acceleration = 0
+
             # Draw the environment
             self.draw(Car)
+            self.car.update()
             
             # Wait to maintain frame rate
             clock.tick(fps)
