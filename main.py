@@ -1,5 +1,6 @@
 from environment import Environment
 from agent import Agent
+from car import Car
 import time
 
 def main():
