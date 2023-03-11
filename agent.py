@@ -4,7 +4,7 @@ import random
 class Agent:
     def __init__(self):
         # Set up Q-network
-        
+
 
         # self.q_network = None # Replace with your Q-network architecture
         
@@ -24,4 +24,8 @@ class Agent:
     
     def learn(self, experiences):
         # Implement Q-learning update here
+        pass
+
+    def replay_buffer(self):
+        # Implement replay buffer here
         pass

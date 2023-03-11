@@ -1,5 +1,6 @@
 from environment import Environment
 from agent import Agent
+import time
 
 def main():
     # Create environment and agent objects
@@ -15,6 +16,8 @@ def main():
         
         done = False
         while not done:
+            env.draw()
+            """
             # Choose action based on agent's policy
             action = agent.act(state)
             
@@ -31,6 +34,7 @@ def main():
             if len(agent.replay_buffer) > agent.batch_size:
                 experiences = agent.replay_buffer.sample(agent.batch_size)
                 agent.learn(experiences)
-
+            """
+    time.sleep(5)
 if __name__ == '__main__':
     main()
