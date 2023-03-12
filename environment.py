@@ -132,7 +132,7 @@ class Environment:
 
             # Draw the environment
             self.draw(Car)
-            
+        
             # Wait to maintain frame rate
             clock.tick(fps)
         

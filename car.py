@@ -15,8 +15,19 @@ class Car:
         self.max_speed = 5
         self.min_speed = -2
         self.angle = 0
+        self.friction = 0.01
 
     def update(self):
+        # Apply friction
+        if self.speed > 0:
+            self.speed -= self.friction * self.speed
+            if self.speed < 0:
+                self.speed = 0
+        elif self.speed < 0:
+            self.speed += self.friction * abs(self.speed)
+            if self.speed > 0:
+                self.speed = 0
+
         self.speed += self.acceleration
         if self.speed > self.max_speed:
             self.speed = self.max_speed
@@ -25,12 +36,12 @@ class Car:
 
         if self.x < 0:
             self.x = 0
-        elif self.x + self.width > self.screen.get_width():
+        elif self.x + self.width/2 > self.screen.get_width():
             self.x = self.screen.get_width() - self.width
         
         if self.y < 0:
             self.y = 0
-        elif self.y + self.height > self.screen.get_height():
+        elif self.y + self.height/2 > self.screen.get_height():
             self.y = self.screen.get_height() - self.height
         
         angle_radians = math.radians(self.angle)
