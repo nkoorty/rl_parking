@@ -36,12 +36,12 @@ class Car:
 
         if self.x < 0:
             self.x = 0
-        elif self.x + self.width/2 > self.screen.get_width():
+        elif self.x > self.screen.get_width():
             self.x = self.screen.get_width() - self.width
         
-        if self.y < 0:
+        if self.y - self.height< 0:
             self.y = 0
-        elif self.y + self.height/2 > self.screen.get_height():
+        elif self.y > self.screen.get_height():
             self.y = self.screen.get_height() - self.height
         
         angle_radians = math.radians(self.angle)
