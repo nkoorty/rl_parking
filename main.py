@@ -2,11 +2,14 @@ from environment import Environment
 from agent import Agent
 from car import Car
 import time
+import random
 
 def main():
     # Create environment and agent objects
     env = Environment()
-    agent = Agent()
+    state_size = env.observation_space.shape[0]
+    action_size = env.action_space.n
+    agent = Agent(state_size, action_size, seed=0)
     
     # Set number of episodes to train for
     num_episodes = 1000
@@ -18,7 +21,6 @@ def main():
         done = False
         while not done:
             env.draw()
-            """
             # Choose action based on agent's policy
             action = agent.act(state)
             
@@ -26,16 +28,15 @@ def main():
             next_state, reward, done = env.step(action)
             
             # Store experience in replay buffer
-            agent.replay_buffer.add(state, action, reward, next_state, done)
+            agent.buffer.append((state, action, reward, next_state, done))
             
             # Update state
             state = next_state
             
             # Train agent using experiences from replay buffer
-            if len(agent.replay_buffer) > agent.batch_size:
-                experiences = agent.replay_buffer.sample(agent.batch_size)
+            if len(agent.buffer) > agent.batch_size:
+                experiences = random.sample(agent.buffer, k=agent.batch_size)
                 agent.learn(experiences)
-            """
-    time.sleep(5)
+
 if __name__ == '__main__':
     main()

@@ -33,20 +33,23 @@ class Car:
             self.speed = self.max_speed
         elif self.speed < self.min_speed:
             self.speed = self.min_speed
-
-        if self.x < 0:
-            self.x = 0
-        elif self.x > self.screen.get_width():
-            self.x = self.screen.get_width() - self.width
-        
-        if self.y - self.height< 0:
-            self.y = 0
-        elif self.y > self.screen.get_height():
-            self.y = self.screen.get_height() - self.height
         
         angle_radians = math.radians(self.angle)
-        self.x += self.speed * math.sin(-angle_radians)
-        self.y -= self.speed * math.cos(angle_radians)
+        new_x = self.x + self.speed * math.sin(-angle_radians)
+        new_y = self.y - self.speed * math.cos(angle_radians)
+
+        if new_x < 0:
+            new_x = 0
+        elif new_x > self.screen.get_width() - self.width:
+            new_x = self.screen.get_width() - self.width
+            
+        if new_y + self.height/2 < 0:
+            new_y = -self.height/2
+        elif new_y > self.screen.get_height() - 6/5*self.height:
+            new_y = self.screen.get_height() - 6/5*self.height
+
+        self.x = new_x
+        self.y = new_y
 
     def rotate_left(self):
         self.angle -= 5

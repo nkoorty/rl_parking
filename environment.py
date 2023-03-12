@@ -3,20 +3,13 @@ from car import Car
 
 class Environment:
     def __init__(self):
-        # Initialize PyGame
         pygame.init()
         
-        # Set screen dimensions
         self.screen_width = 400
         self.screen_height = 600
         
-        # Create screen object
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        
-        # Set background color
         self.bg_color = (230, 230, 230)
-
-        # Creating the Car object
         self.car = Car(self.screen, self.screen_width/2, self.screen_height - 100)
     
     def draw(self, car):
@@ -36,18 +29,14 @@ class Environment:
         border_color = (255, 255, 0)
         target_color = (60, 207, 43)
 
-        # Left empty space
+        # Draw empty spaces
         left_empty_space = pygame.Rect(0, 0, (self.screen_width / 2) - lane_width, self.screen_height)
         pygame.draw.rect(self.screen, (48, 48, 48), left_empty_space)
-
-        # Right empty space
         right_empty_space = pygame.Rect((self.screen_width / 2) + lane_width, 0, (self.screen_width / 2) - lane_width, self.screen_height)
         pygame.draw.rect(self.screen, (48, 48, 48), right_empty_space)
         
-        # Draw left lane
+        # Draw lanes
         pygame.draw.rect(self.screen, lane_color, ((self.screen_width/2) - (lane_width), 0, lane_width, lane_height))
-        
-        # Draw right lane
         pygame.draw.rect(self.screen, lane_color, ((self.screen_width/2), 0, lane_width, lane_height))
         
         # Draw striped line
@@ -61,7 +50,7 @@ class Environment:
             line_y += line_height + line_spacing
         
         # Draw multiple parking spaces on the right
-        num_spaces = 4  # Change this value to adjust the number of parking spaces
+        num_spaces = 4 
         space_x = (self.screen_width / 2) + lane_width 
         space_y = (self.screen_height - num_spaces * (space_height)) / 2 
         for i in range(num_spaces):
@@ -76,7 +65,7 @@ class Environment:
             space_y += space_height - 2
 
         # Draw multiple parking spaces on the left
-        num_spaces = 4  # Change this value to adjust the number of parking spaces
+        num_spaces = 4  
         space_x = (self.screen_width / 2) - lane_width - space_width 
         space_y = (self.screen_height - num_spaces * (space_height)) / 2  
         for i in range(num_spaces):
@@ -86,27 +75,30 @@ class Environment:
             space_y += space_height - 2
 
         self.car.draw()
-
-        # Update the screen
         pygame.display.flip()
 
     """
     def reset(self):
-        # Reset environment to initial state
-        pass
+        # Reset car position and angle
+        self.car.x = self.screen_width/2
+        self.car.y = self.screen_height - 100
+        self.car.angle = 0
+
+        # Randomly select target parking space
+        self.target_space = np.random.randint(0, 8)
+
+        # Return initial state
+        state = np.array([self.car.x, self.car.y, self.car.angle, self.target_space])
+        return state
 
     def step(self, action):
         # Take action in environment and observe next state and reward
         pass
     """
     def run(self):
-        # Set up the game clock
         clock = pygame.time.Clock()
-        
-        # Set the frame rate
         fps = 30
-        
-        # Game loop
+
         running = True
         while running:
             # Handle events
@@ -132,7 +124,7 @@ class Environment:
             self.car.update()
 
             # Draw the environment
-            self.draw(Car)
+            self.draw(self.car)
         
             # Wait to maintain frame rate
             clock.tick(fps)
