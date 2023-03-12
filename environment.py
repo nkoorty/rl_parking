@@ -114,20 +114,24 @@ class Environment:
                 if event.type == pygame.QUIT:
                     running = False
             keys = pygame.key.get_pressed()
+            acceleration = 0
+            angle = self.car.angle
             if keys[pygame.K_UP]:
-                self.car.move_forwards()
-            elif keys[pygame.K_DOWN]:
-                self.car.move_backwards()
-            elif keys[pygame.K_RIGHT]:
-                self.car.move_right()
-            elif keys[pygame.K_LEFT]:
-                self.car.move_left()  
-            else:
-                self.car.acceleration = 0
+                acceleration += 0.1
+            if keys[pygame.K_DOWN]:
+                acceleration -= 0.1
+            if keys[pygame.K_LEFT]:
+                angle += 2
+            if keys[pygame.K_RIGHT]:
+                angle -= 2
+
+            # Update the car
+            self.car.acceleration = acceleration
+            self.car.angle = angle
+            self.car.update()
 
             # Draw the environment
             self.draw(Car)
-            self.car.update()
             
             # Wait to maintain frame rate
             clock.tick(fps)
