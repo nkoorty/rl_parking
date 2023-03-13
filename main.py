@@ -1,40 +1,41 @@
 from environment import Environment
-from agent import Agent
-import random
+from agent import DQNAgent
 
 def main():
-    # Create environment and agent objects
+    # Initialize environment and agent
     env = Environment()
-    state_size = env.observation_space.shape[0]
-    action_size = env.action_space.n
-    agent = Agent(state_size, action_size, seed=0)
-    
-    # Set number of episodes to train for
-    num_episodes = 1000
-    
-    for episode in range(num_episodes):
-        # Reset environment and get initial state
+    agent = DQNAgent(state_size=3, action_size=4)
+
+    # Train the agent
+    episodes = 1000
+    for episode in range(episodes):
         state = env.reset()
-        
         done = False
         while not done:
-            # Choose action based on agent's policy
+            # Choose action using epsilon-greedy policy
             action = agent.act(state)
-            
-            # Take action in environment and observe next state and reward
-            next_state, reward, done, _ = env.step(action)
-            
-            # Store experience in replay buffer
-            agent.buffer.append((state, action, reward, next_state, done))
-            
-            # Update state
-            state = next_state
-            
-            # Train agent using experiences from replay buffer
-            if len(agent.buffer) > agent.batch_size:
-                experiences = random.sample(agent.buffer, k=agent.batch_size)
-                agent.learn(experiences)
 
-if __name__ == '__main__':
+            next_state, reward, done = env.step(action)
+            agent.remember(state, action, reward, next_state, done)
+            agent.learn(batch_size=1)
+
+            state = next_state
+
+        # Print progress
+        print(f"Episode {episode+1}/{episodes}, Score: {env.car.parked_count}")
+
+    # Test the trained agent
+    state = env.reset()
+    done = False
+    while not done:
+        action = agent.act(state, epsilon=0)
+
+        next_state, reward, done = env.step(action)
+
+        state = next_state
+
+    # Quit the game
+    env.quit()
+
+if __name__ == "__main__":
     main()
-    

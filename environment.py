@@ -78,7 +78,6 @@ class Environment:
         self.car.draw()
         pygame.display.flip()
 
-
     def reset(self):
         # Reset car position and angle
         self.car.x = self.screen_width/2
@@ -88,50 +87,57 @@ class Environment:
         # Return initial state
         state = np.array([self.car.x, self.car.y, self.car.angle])
         return state
-    """
+    
     def step(self, action):
         # Take action in environment and observe next state and reward
-        pass
-    """
+        # Update the car based on action
+        acceleration = 0
+        angle = self.car.angle
+        if action == 0:
+            acceleration += 0.2
+        elif action == 1:
+            acceleration -= 0.1
+        elif action == 2:
+            angle += 2
+        elif action == 3:
+            angle -= 2
+        self.car.acceleration = acceleration
+        self.car.angle = angle
+        self.car.update()
+        # Get the new state and reward
+        state = np.array([self.car.x, self.car.y, self.car.angle])
+        reward = 1.0 if self.car.is_parked() else -0.1
+        done = False
+        return state, reward, done
+    
     def run(self):
         clock = pygame.time.Clock()
         fps = 30
-
         running = True
         while running:
             # Handle events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                    
-            keys = pygame.key.get_pressed()
-            acceleration = 0
-            angle = self.car.angle
-            if keys[pygame.K_UP]:
-                acceleration += 0.1
-            if keys[pygame.K_DOWN]:
-                acceleration -= 0.1
-            if keys[pygame.K_LEFT]:
-                angle += 2
-            if keys[pygame.K_RIGHT]:
-                angle -= 2
+            state = np.array([self.car.x, self.car.y, self.car.angle])
+            action = np.random.choice(4)
+            next_state, reward, done = self.step(action)
 
-            # Update the car
-            self.car.acceleration = acceleration
-            self.car.angle = angle
-            self.car.update()
-
-            # Draw the environment
             self.draw(self.car)
-        
-            # Wait to maintain frame rate
+            state = next_state
+   
+            if done:
+                self.reset()
+
             clock.tick(fps)
-        
         # Quit Pygame
         pygame.quit()
+    
+    def quit(self):
+        pygame.quit()
+        exit()
 
 if __name__ == "__main__":
     env = Environment()
     env.run()
 
-    

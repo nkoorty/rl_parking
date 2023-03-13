@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import random
 from collections import deque
+from car import Car
 
 class DQNAgent:
     def __init__(self, state_size, action_size):
@@ -24,7 +25,6 @@ class DQNAgent:
         
         # Initialize the model
         self.model = self._build_model()
-        
     def _build_model(self):
         # Define neural network architecture
         model = tf.keras.models.Sequential([
@@ -50,7 +50,7 @@ class DQNAgent:
             q_values = self.model.predict(state)
             return np.argmax(q_values[0])
     
-    def replay(self, batch_size):
+    def learn(self, batch_size):
         # Sample a batch from replay memory
         batch = random.sample(self.memory, batch_size)
         
@@ -79,5 +79,3 @@ class DQNAgent:
     def save(self, name):
         # Save model weights
         self.model.save_weights(name)
-
-        

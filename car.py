@@ -57,6 +57,12 @@ class Car:
         self.x = new_x
         self.y = new_y
 
+    def is_parked(self):
+        tolerance = 10
+        top_left = (280 - tolerance, 180 - tolerance)
+        bottom_right = (340 + tolerance, 300 + tolerance)
+        return (top_left[0] <= self.x <= bottom_right[0] and top_left[1] <= self.y <= bottom_right[1])
+
     def rotate_left(self):
         self.angle -= 5
 
@@ -67,4 +73,3 @@ class Car:
         rotated_image = pygame.transform.rotate(self.car_image, self.angle)
         rect = rotated_image.get_rect(center=(self.x + self.width / 2, self.y + self.height/2))
         self.screen.blit(rotated_image, rect)
-        
