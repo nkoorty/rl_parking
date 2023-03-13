@@ -25,6 +25,7 @@ class DQNAgent:
         
         # Initialize the model
         self.model = self._build_model()
+
     def _build_model(self):
         # Define neural network architecture
         model = tf.keras.models.Sequential([
@@ -34,7 +35,7 @@ class DQNAgent:
         ])
         
         # Compile model
-        model.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(lr=self.learning_rate))
+        model.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate))
         
         return model
     
@@ -51,6 +52,11 @@ class DQNAgent:
             return np.argmax(q_values[0])
     
     def learn(self, batch_size):
+        if len(self.memory) < batch_size:
+            return
+
+        if batch_size <= 0:
+            return
         # Sample a batch from replay memory
         batch = random.sample(self.memory, batch_size)
         
