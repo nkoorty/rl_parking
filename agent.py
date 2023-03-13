@@ -39,7 +39,6 @@ class DQNAgent:
         return model
     
     def remember(self, state, action, reward, next_state, done):
-        # Add experience to replay memory
         self.memory.append((state, action, reward, next_state, done))
     
     def act(self, state):

@@ -41,17 +41,26 @@ class Car:
         if new_y < 15 or new_y > 495: # (y-45)Since y is y-height/2
             if new_x < 120:
                 new_x = 120
-            elif new_x > 280 - self.width:
+            if new_x > 280 - self.width:
                 new_x = 280 - self.width
         else:
+            if 60 <= new_x <= 120 and new_y < 60:
+                new_y = 60
+            if 280 <= new_x <= 340 and new_y < 60:
+                new_y = 60
+            if 60 <= new_x <= 120 and new_y > 540:
+                new_y = 540
+            if 280 <= new_x <= 340 and new_y > 540:
+                new_y = 540     
+
             if new_x < 60:
                 new_x = 60
-            elif new_x > 340 - self.width:
+            if new_x > 340 - self.width:
                 new_x = 340 - self.width
 
         if new_y + 1/5 * self.height < 0:
             new_y = - 1/5 * self.height
-        elif new_y > self.screen.get_height() - 4/5*self.height:
+        if new_y > self.screen.get_height() - 4/5*self.height:
             new_y = self.screen.get_height() - 4/5*self.height
 
         self.x = new_x
