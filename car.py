@@ -38,20 +38,23 @@ class Car:
         new_x = self.x + self.speed * math.sin(-angle_radians)
         new_y = self.y - self.speed * math.cos(angle_radians)
 
-        if new_y < 15 or new_y > 495: # (y-45)Since y is y-height/2
+        self.x = new_x
+        self.y = new_y
+
+    def handle_boundary(self):
+        new_x = self.x
+        new_y = self.y
+
+        if new_y < 15 or new_y > 495: # (y-45) Since y is y-height/2
             if new_x < 120:
                 new_x = 120
             if new_x > 280 - self.width:
                 new_x = 280 - self.width
         else:
-            if 60 <= new_x <= 120 and new_y < 60:
+            if (60 <= new_x <= 120 or 280 <= new_x <= 340)and new_y < 60:
                 new_y = 60
-            if 280 <= new_x <= 340 and new_y < 60:
-                new_y = 60
-            if 60 <= new_x <= 120 and new_y > 540:
-                new_y = 540
-            if 280 <= new_x <= 340 and new_y > 540:
-                new_y = 540     
+            if (60 <= new_x <= 120 or 280 <= new_x <= 340) and new_y > 540:
+                new_y = 540   
 
             if new_x < 60:
                 new_x = 60
