@@ -1,7 +1,5 @@
 from environment import Environment
 from agent import Agent
-from car import Car
-import time
 import random
 
 def main():
@@ -20,12 +18,11 @@ def main():
         
         done = False
         while not done:
-            env.draw()
             # Choose action based on agent's policy
             action = agent.act(state)
             
             # Take action in environment and observe next state and reward
-            next_state, reward, done = env.step(action)
+            next_state, reward, done, _ = env.step(action)
             
             # Store experience in replay buffer
             agent.buffer.append((state, action, reward, next_state, done))

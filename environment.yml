@@ -1,0 +1,11 @@
+name: sprl
+channels:
+    - conda-forge
+    - anaconda
+dependencies:
+  - python=3.8
+  - pip
+  - numpy
+  - pandas
+  - tensorflow
+  - pygame 

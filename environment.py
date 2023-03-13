@@ -1,4 +1,5 @@
 import pygame
+import numpy as np
 from car import Car
 
 class Environment:
@@ -77,20 +78,17 @@ class Environment:
         self.car.draw()
         pygame.display.flip()
 
-    """
+
     def reset(self):
         # Reset car position and angle
         self.car.x = self.screen_width/2
         self.car.y = self.screen_height - 100
         self.car.angle = 0
 
-        # Randomly select target parking space
-        self.target_space = np.random.randint(0, 8)
-
         # Return initial state
-        state = np.array([self.car.x, self.car.y, self.car.angle, self.target_space])
+        state = np.array([self.car.x, self.car.y, self.car.angle])
         return state
-
+    """
     def step(self, action):
         # Take action in environment and observe next state and reward
         pass

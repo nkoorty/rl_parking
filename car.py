@@ -38,15 +38,21 @@ class Car:
         new_x = self.x + self.speed * math.sin(-angle_radians)
         new_y = self.y - self.speed * math.cos(angle_radians)
 
-        if new_x < 0:
-            new_x = 0
-        elif new_x > self.screen.get_width() - self.width:
-            new_x = self.screen.get_width() - self.width
-            
-        if new_y + self.height/2 < 0:
-            new_y = -self.height/2
-        elif new_y > self.screen.get_height() - 6/5*self.height:
-            new_y = self.screen.get_height() - 6/5*self.height
+        if new_y < 15 or new_y > 495: # (y-45)Since y is y-height/2
+            if new_x < 120:
+                new_x = 120
+            elif new_x > 280 - self.width:
+                new_x = 280 - self.width
+        else:
+            if new_x < 60:
+                new_x = 60
+            elif new_x > 340 - self.width:
+                new_x = 340 - self.width
+
+        if new_y + 1/5 * self.height < 0:
+            new_y = - 1/5 * self.height
+        elif new_y > self.screen.get_height() - 4/5*self.height:
+            new_y = self.screen.get_height() - 4/5*self.height
 
         self.x = new_x
         self.y = new_y
@@ -59,5 +65,5 @@ class Car:
 
     def draw(self):
         rotated_image = pygame.transform.rotate(self.car_image, self.angle)
-        rect = rotated_image.get_rect(center=(self.x + self.width / 2, self.y + self.height * 4/5))
+        rect = rotated_image.get_rect(center=(self.x + self.width / 2, self.y + self.height/2))
         self.screen.blit(rotated_image, rect)
