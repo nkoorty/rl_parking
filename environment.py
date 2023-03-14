@@ -94,9 +94,9 @@ class Environment:
         acceleration = 0
         angle = self.car.angle
         if action == 0:
-            acceleration += 0.2
+            acceleration += 1
         elif action == 1:
-            acceleration -= 0.1
+            acceleration -= 0.5
         elif action == 2:
             angle += 2
         elif action == 3:

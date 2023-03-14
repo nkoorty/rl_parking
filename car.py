@@ -10,9 +10,9 @@ class Car:
         self.car_image = pygame.transform.scale(self.car_image, (self.width, self.height))
         self.x = x - self.width/2
         self.y = y - self.height/2
-        self.speed = 0
+        self.speed = 2
         self.acceleration = 0
-        self.max_speed = 4
+        self.max_speed = 5
         self.min_speed = -2
         self.angle = 0
         self.friction = 0.01
@@ -46,31 +46,41 @@ class Car:
         new_x = self.x
         new_y = self.y
 
+        collided = False
+
         if new_y < 15 or new_y > 495: # (y-45) Since y is y-height/2
             if new_x < 120:
                 new_x = 120
+                collided = True
             if new_x > 280 - self.width:
                 new_x = 280 - self.width
+                collided = True
         else:
             if (45 <= new_x <= 120 or 250 <= new_x <= 340)and new_y < 60:
                 new_y = 60
+                collided = True
             if (60 <= new_x <= 120 or 280 <= new_x <= 340) and new_y > 540:
-                new_y = 540   
+                new_y = 540
+                collided = True   
 
             if new_x < 60:
                 new_x = 60
+                collided = True
             if new_x > 340 - self.width:
                 new_x = 340 - self.width
+                collided = True
 
         if new_y + 1/5 * self.height < 0:
             new_y = - 1/5 * self.height
+            collided = True
         if new_y > self.screen.get_height() - 4/5*self.height:
             new_y = self.screen.get_height() - 4/5*self.height
+            collided = True
 
         self.x = new_x
         self.y = new_y
 
-        return True 
+        return collided 
     def is_parked(self):
         tolerance = 10
         top_left = (280 - tolerance, 180 - tolerance)
