@@ -87,10 +87,10 @@ class Environment:
         # Return initial state
         state = np.array([self.car.x, self.car.y, self.car.angle])
         return state
-    
+
     def step(self, action):
-        # Take action in environment and observe next state and reward
-        # Update the car based on action
+        # Take action in the environment and observe the next state and reward
+        # Update the car based on the action
         acceleration = 0
         angle = self.car.angle
         if action == 0:
@@ -104,11 +104,13 @@ class Environment:
         self.car.acceleration = acceleration
         self.car.angle = angle
         self.car.update()
-        self.car.handle_boundary()
+        boundary_hit = self.car.handle_boundary()
         # Get the new state and reward
         state = np.array([self.car.x, self.car.y, self.car.angle])
         reward = 1.0 if self.car.is_parked() else -0.1
         done = False
+        if boundary_hit or self.car.is_parked():
+            done = True
         return state, reward, done
     
     def run(self):

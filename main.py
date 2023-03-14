@@ -8,11 +8,13 @@ def main():
 
     # Train the agent
     episodes = 1000
+    max_steps = 1000  # Set your desired maximum number of steps per episode
+
     for episode in range(episodes):
         state = env.reset()
         done = False
-        while not done:
-            # Choose action using epsilon-greedy policy
+        step = 0
+        while not done and step < max_steps:
             action = agent.act(state)
 
             next_state, reward, done = env.step(action)
@@ -20,7 +22,7 @@ def main():
             agent.learn(batch_size=1)
 
             state = next_state
-
+        step += 1
         # Print progress
         print(f"Episode {episode+1}/{episodes}, Score: {env.car.parked_count}")
 

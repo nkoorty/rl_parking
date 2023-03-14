@@ -12,46 +12,27 @@ class Car:
         self.y = y - self.height/2
         self.speed = 0
         self.acceleration = 0
-        self.max_speed = 5
+        self.max_speed = 4
         self.min_speed = -2
         self.angle = 0
         self.friction = 0.01
-        self.steering_angle = 0
-        self.max_steering_angle = 30
-        self.turn_rate = 5
-        self.handling = 0.9
-        self.brake_power = 0.5
-        self.inertia = 0.1
 
     def update(self):
-        # Apply friction and inertia
+        # Apply friction
         if self.speed > 0:
-            self.speed -= self.friction * self.speed + self.inertia * self.speed ** 2
+            self.speed -= self.friction * self.speed
             if self.speed < 0:
                 self.speed = 0
         elif self.speed < 0:
-            self.speed += self.friction * abs(self.speed) + self.inertia * self.speed ** 2
+            self.speed += self.friction * abs(self.speed)
             if self.speed > 0:
                 self.speed = 0
 
-        # Apply acceleration and braking
-        if self.acceleration > 0:
-            self.speed += self.acceleration * self.handling
-            if self.speed > self.max_speed:
-                self.speed = self.max_speed
-        elif self.acceleration < 0:
-            self.speed += self.acceleration * self.brake_power
-            if self.speed < self.min_speed:
-                self.speed = self.min_speed
-
-        # Apply steering
-        self.steering_angle += self.turn_rate * self.angle
-        if self.steering_angle > self.max_steering_angle:
-            self.steering_angle = self.max_steering_angle
-        elif self.steering_angle < -self.max_steering_angle:
-            self.steering_angle = -self.max_steering_angle
-        self.angle += self.steering_angle * self.speed / self.width
-        self.steering_angle *= self.handling
+        self.speed += self.acceleration
+        if self.speed > self.max_speed:
+            self.speed = self.max_speed
+        elif self.speed < self.min_speed:
+            self.speed = self.min_speed
 
         # Update position
         angle_radians = math.radians(self.angle)
@@ -71,7 +52,7 @@ class Car:
             if new_x > 280 - self.width:
                 new_x = 280 - self.width
         else:
-            if (60 <= new_x <= 120 or 280 <= new_x <= 340)and new_y < 60:
+            if (45 <= new_x <= 120 or 250 <= new_x <= 340)and new_y < 60:
                 new_y = 60
             if (60 <= new_x <= 120 or 280 <= new_x <= 340) and new_y > 540:
                 new_y = 540   
@@ -89,6 +70,7 @@ class Car:
         self.x = new_x
         self.y = new_y
 
+        return True 
     def is_parked(self):
         tolerance = 10
         top_left = (280 - tolerance, 180 - tolerance)
