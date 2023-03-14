@@ -1,6 +1,8 @@
 from environment import Environment
 from agent import DQNAgent
 import pygame
+import os
+import datetime
 
 def main():
     # Initialize environment and agent
@@ -35,6 +37,13 @@ def main():
         # Print progress
         print(f"Episode {episode+1}/{episodes}, Score: 0")
 
+
+    # Save the trained agent's weights
+    current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    weights_file = f"past_runs/weights_{current_time}.h5"
+    agent.save_weights(weights_file)
+    print(f"Agent's weights saved to {weights_file}")
+    
     # Test the trained agent
     state = env.reset()
     done = False
