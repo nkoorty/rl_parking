@@ -7,7 +7,7 @@ def main():
     agent = DQNAgent(state_size=3, action_size=4)
 
     # Train the agent
-    episodes = 1000
+    episodes = 100
     max_steps = 1000  # Set your desired maximum number of steps per episode
 
     for episode in range(episodes):
@@ -22,9 +22,9 @@ def main():
             agent.learn(batch_size=1)
 
             state = next_state
-        step += 1
+            step += 1
         # Print progress
-        print(f"Episode {episode+1}/{episodes}, Score: {env.car.parked_count}")
+        print(f"Episode {episode+1}/{episodes}, Score: 0")
 
     # Test the trained agent
     state = env.reset()

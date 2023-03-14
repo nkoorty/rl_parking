@@ -41,9 +41,12 @@ class DQNAgent:
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
     
-    def act(self, state):
+    def act(self, state, epsilon=None):
+        # Use the provided epsilon value if not None, otherwise use the agent's epsilon
+        epsilon = self.epsilon if epsilon is None else epsilon
+
         # Choose action based on epsilon-greedy policy
-        if np.random.rand() <= self.epsilon:
+        if np.random.rand() <= epsilon:
             return random.randrange(self.action_size)
         else:
             state = np.reshape(state, (1, -1))  # Add this line to reshape the state
