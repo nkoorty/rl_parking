@@ -46,6 +46,7 @@ class DQNAgent:
         if np.random.rand() <= self.epsilon:
             return random.randrange(self.action_size)
         else:
+            state = np.reshape(state, (1, -1))  # Add this line to reshape the state
             q_values = self.model.predict(state)
             return np.argmax(q_values[0])
     
@@ -62,10 +63,12 @@ class DQNAgent:
             # Calculate target Q-values
             target = reward
             if not done:
+                next_state = np.reshape(next_state, (1, -1))  # Add this line to reshape the next_state
                 q_next = self.model.predict(next_state)[0]
                 target = reward + self.gamma * np.amax(q_next)
                 
             # Calculate predicted Q-values
+            state = np.reshape(state, (1, -1))  # Add this line to reshape the state
             q_values = self.model.predict(state)
             q_values[0][action] = target
             
