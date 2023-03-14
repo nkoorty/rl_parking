@@ -16,24 +16,44 @@ class Car:
         self.min_speed = -2
         self.angle = 0
         self.friction = 0.01
+        self.steering_angle = 0
+        self.max_steering_angle = 30
+        self.turn_rate = 5
+        self.handling = 0.9
+        self.brake_power = 0.5
+        self.inertia = 0.1
 
     def update(self):
-        # Apply friction
+        # Apply friction and inertia
         if self.speed > 0:
-            self.speed -= self.friction * self.speed
+            self.speed -= self.friction * self.speed + self.inertia * self.speed ** 2
             if self.speed < 0:
                 self.speed = 0
         elif self.speed < 0:
-            self.speed += self.friction * abs(self.speed)
+            self.speed += self.friction * abs(self.speed) + self.inertia * self.speed ** 2
             if self.speed > 0:
                 self.speed = 0
 
-        self.speed += self.acceleration
-        if self.speed > self.max_speed:
-            self.speed = self.max_speed
-        elif self.speed < self.min_speed:
-            self.speed = self.min_speed
-        
+        # Apply acceleration and braking
+        if self.acceleration > 0:
+            self.speed += self.acceleration * self.handling
+            if self.speed > self.max_speed:
+                self.speed = self.max_speed
+        elif self.acceleration < 0:
+            self.speed += self.acceleration * self.brake_power
+            if self.speed < self.min_speed:
+                self.speed = self.min_speed
+
+        # Apply steering
+        self.steering_angle += self.turn_rate * self.angle
+        if self.steering_angle > self.max_steering_angle:
+            self.steering_angle = self.max_steering_angle
+        elif self.steering_angle < -self.max_steering_angle:
+            self.steering_angle = -self.max_steering_angle
+        self.angle += self.steering_angle * self.speed / self.width
+        self.steering_angle *= self.handling
+
+        # Update position
         angle_radians = math.radians(self.angle)
         new_x = self.x + self.speed * math.sin(-angle_radians)
         new_y = self.y - self.speed * math.cos(angle_radians)
