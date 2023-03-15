@@ -10,12 +10,12 @@ def main():
     agent = DQNAgent(state_size=3, action_size=4)
 
     # Train the agent
-    episodes = 1000
-    max_steps = 400  # Set your desired maximum number of steps per episode
+    episodes = 500
+    max_steps = 300  # Set your desired maximum number of steps per episode
+    #render_after_episode = 300  # Set the episode number after which you want to start rendering
 
-    # Create a clock to control rendering speed
     clock = pygame.time.Clock()
-    fps = 100
+    fps = 10
 
     for episode in range(episodes):
         state = env.reset()
@@ -30,10 +30,15 @@ def main():
 
             state = next_state
             step += 1
-
-            # Draw the environment and control the rendering speed
+            """
+            # Render the environment only after the specified number of episodes
+            if episode >= render_after_episode:
+                env.draw()
+            """
             env.draw(env.car)
+
             clock.tick(fps)
+
         # Print progress
         print(f"Episode {episode+1}/{episodes}, Score: 0")
 
@@ -43,7 +48,7 @@ def main():
     weights_file = f"past_runs/weights_{current_time}.h5"
     agent.save_weights(weights_file)
     print(f"Agent's weights saved to {weights_file}")
-    
+
     # Test the trained agent
     state = env.reset()
     done = False

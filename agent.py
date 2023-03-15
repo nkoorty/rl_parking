@@ -75,7 +75,6 @@ class DQNAgent:
             q_values = self.model.predict(state)
             q_values[0][action] = target
             
-            # Train the model on the batch
             self.model.fit(state, q_values, epochs=1, verbose=0)
             
         # Decay epsilon
@@ -89,3 +88,6 @@ class DQNAgent:
     def save(self, name):
         # Save model weights
         self.model.save_weights(name)
+
+    def save_weights(self, weights_file):
+        self.model.save_weights(weights_file)
