@@ -107,7 +107,7 @@ class Environment:
         boundary_hit = self.car.handle_boundary()
         # Get the new state and reward
         state = np.array([self.car.x, self.car.y, self.car.angle])
-        reward = 1.0 if self.car.is_parked() else -0.1
+        reward = 10.0 if self.car.is_parked() else -0.1
         done = False
         if boundary_hit or self.car.is_parked():
             done = True
