@@ -21,6 +21,7 @@ def main():
         state = env.reset()
         done = False
         step = 0
+        total_reward = 0
         while not done and step < max_steps:
             action = agent.act(state)
 
@@ -30,17 +31,13 @@ def main():
 
             state = next_state
             step += 1
-            """
-            # Render the environment only after the specified number of episodes
-            if episode >= render_after_episode:
-                env.draw()
-            """
-            env.draw(env.car)
+            total_reward += reward
+            env.draw(env.car, episode+1, total_reward)
 
             clock.tick(fps)
 
         # Print progress
-        print(f"Episode {episode+1}/{episodes}, Score: 0")
+        print(f"Episode {episode+1}/{episodes}, Score: {reward}")
 
 
     # Save the trained agent's weights

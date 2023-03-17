@@ -14,8 +14,15 @@ class Environment:
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.bg_color = (230, 230, 230)
         self.car = Car(self.screen, self.screen_width/2 + 15, self.screen_height - 100)
+
+        pygame.font.init()
+        self.font = pygame.font.Font(None, 24)
     
-    def draw(self, car):
+    def draw_text(self, text, x, y, color=(255, 255, 255)):
+        text_surface = self.font.render(text, True, color)
+        self.screen.blit(text_surface, (x, y))
+
+    def draw(self, car, episode, reward):
         # Fill screen with background color
         self.screen.fill(self.bg_color)
         
@@ -78,6 +85,8 @@ class Environment:
             space_y += space_height - 2
 
         self.car.draw()
+        self.draw_text(f"Episode: {episode}", 10, 10)
+        self.draw_text(f"Reward: {reward:.2f}", 10, 35)
         pygame.display.flip()
 
     def reset(self):
@@ -96,13 +105,13 @@ class Environment:
         acceleration = 0
         angle = self.car.angle
         if action == 0:
-            acceleration += 1
+            acceleration += 2
         elif action == 1:
-            acceleration -= 0.5
+            acceleration -= 1
         elif action == 2:
-            angle += 2
+            angle += 4
         elif action == 3:
-            angle -= 2
+            angle -= 4
 
         self.car.acceleration = acceleration
         self.car.angle = angle
@@ -118,26 +127,28 @@ class Environment:
         # Define zones and penalties
         in_lane = 200 <= self.car.x <= 280
         in_right_parking_spaces = (self.car.x >= 280) and (self.car.x >= 340) and (self.car.y >= 180) and (self.car.y <= 300)
-        in_wrong_parking_space = ((self.car.x >= 280) and (self.car.x >= 340) and ((self.car.y >= 60) and (self.car.y <= 180) or (self.car.y >= 300) and (self.car.y <= 540)))
-
+        in_wrong_parking_space_right = ((self.car.x >= 280) and (self.car.x >= 340) and (((self.car.y >= 60) and (self.car.y <= 180)) or ((self.car.y >= 300) and (self.car.y <= 540))))
+        # in_wrong_parking_space_left = ((self.car.x >= 60) and (self.car.x >= 120) and (self.car.y >= 60) and (self.car.y <= 540))
         # Calculate reward
         reward = 0
         if self.car.is_parked():
-            reward = 1000
+            reward = 3000
             print("parked")
-        elif boundary_hit or in_wrong_parking_space:
+
+        # or in_wrong_parking_space_left
+        elif boundary_hit or in_wrong_parking_space_right:
             reward = -500
             print("boundary or wrong parking space")
         else:
-            reward -= 1
-            reward -= 5 * distance
+            reward -= 0.1
+            reward -= 0.05 * distance
             print("distance to target: ", distance)
-            if not in_lane and not in_right_parking_spaces:
+            if not in_lane or not in_right_parking_spaces:
                 reward -= 100
                 print("wrong lane")
         
         done = False
-        if boundary_hit or self.car.is_parked() or in_wrong_parking_space:
+        if boundary_hit or self.car.is_parked() or in_wrong_parking_space_right: #or in_wrong_parking_space_left:
             done = True
         return state, reward, done
     
@@ -145,6 +156,7 @@ class Environment:
         clock = pygame.time.Clock()
         fps = 30
         running = True
+        episode = 0
         while running:
             # Handle events
             for event in pygame.event.get():
@@ -156,8 +168,9 @@ class Environment:
 
             self.draw(self.car)
             state = next_state
-   
+
             if done:
+                episode += 1
                 self.reset()
 
             clock.tick(fps)
