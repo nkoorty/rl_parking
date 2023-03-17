@@ -92,17 +92,17 @@ class Environment:
         # Take action in the environment and observe the next state and reward
         # Update the car based on the action
         acceleration = 0
-        angle = self.car.angle
+        angular_vel = self.car.angular_velocity
         if action == 0:
             acceleration += 1
         elif action == 1:
             acceleration -= 0.5
         elif action == 2:
-            angle += 2
+            angular_vel += 2
         elif action == 3:
-            angle -= 2
+            angular_vel -= 2
         self.car.acceleration = acceleration
-        self.car.angle = angle
+        self.car.angular_velocity = angular_vel
         self.car.update()
         boundary_hit = self.car.handle_boundary()
         # Get the new state and reward

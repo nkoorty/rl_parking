@@ -16,6 +16,7 @@ class Car:
         self.min_speed = -2
         self.angle = 0
         self.friction = 0.01
+        self.angular_velocity = 0
 
     def update(self):
         # Apply friction
@@ -81,6 +82,7 @@ class Car:
         self.y = new_y
 
         return collided 
+    
     def is_parked(self):
         tolerance = 10
         top_left = (280 - tolerance, 180 - tolerance)
@@ -88,10 +90,10 @@ class Car:
         return (top_left[0] <= self.x <= bottom_right[0] and top_left[1] <= self.y <= bottom_right[1])
 
     def rotate_left(self):
-        self.angle -= 5
+        self.angle -= self.angular_velocity
 
     def rotate_right(self):
-        self.angle += 5
+        self.angle += self.angular_velocity
 
     def draw(self):
         rotated_image = pygame.transform.rotate(self.car_image, self.angle)
