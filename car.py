@@ -16,7 +16,6 @@ class Car:
         self.min_speed = -2
         self.angle = 0
         self.friction = 0.01
-        self.angular_velocity = 0
 
     def update(self):
         # Apply friction
@@ -50,6 +49,7 @@ class Car:
         collided = False
 
         if new_y < 15 or new_y > 495: # (y-45) Since y is y-height/2
+            print("collided")
             if new_x < 120:
                 new_x = 120
                 collided = True
@@ -57,10 +57,10 @@ class Car:
                 new_x = 280 - self.width
                 collided = True
         else:
-            if (45 <= new_x <= 120 or 250 <= new_x <= 340)and new_y < 60:
+            if (35 <= new_x <= 110 or 240 <= new_x <= 340) and new_y < 60:
                 new_y = 60
                 collided = True
-            if (60 <= new_x <= 120 or 280 <= new_x <= 340) and new_y > 540:
+            if (35 <= new_x <= 110 or 240 <= new_x <= 340) and new_y > 540:
                 new_y = 540
                 collided = True   
 
@@ -88,12 +88,6 @@ class Car:
         top_left = (280 - tolerance, 180 - tolerance)
         bottom_right = (340 + tolerance, 300 + tolerance)
         return (top_left[0] <= self.x <= bottom_right[0] and top_left[1] <= self.y <= bottom_right[1])
-
-    def rotate_left(self):
-        self.angle -= self.angular_velocity
-
-    def rotate_right(self):
-        self.angle += self.angular_velocity
 
     def draw(self):
         rotated_image = pygame.transform.rotate(self.car_image, self.angle)
