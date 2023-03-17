@@ -1,6 +1,8 @@
 import pygame
 import numpy as np
+import math
 from car import Car
+
 
 class Environment:
     def __init__(self):
@@ -11,7 +13,7 @@ class Environment:
         
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.bg_color = (230, 230, 230)
-        self.car = Car(self.screen, self.screen_width/2, self.screen_height - 100)
+        self.car = Car(self.screen, self.screen_width/2 + 15, self.screen_height - 100)
     
     def draw(self, car):
         # Fill screen with background color
@@ -80,7 +82,7 @@ class Environment:
 
     def reset(self):
         # Reset car position and angle
-        self.car.x = self.screen_width/2
+        self.car.x = self.screen_width/2 + 15
         self.car.y = self.screen_height - 100
         self.car.angle = 0
 
@@ -108,9 +110,34 @@ class Environment:
         boundary_hit = self.car.handle_boundary()
         # Get the new state and reward
         state = np.array([self.car.x, self.car.y, self.car.angle])
-        reward = 10.0 if self.car.is_parked() else -0.1
+
+        # Calculate distance to target parking spot
+        target_x, target_y = 310, 240
+        distance = math.sqrt((self.car.x - target_x)**2 + (self.car.y - target_y)**2)
+
+        # Define zones and penalties
+        in_lane = 200 <= self.car.x <= 280
+        in_right_parking_spaces = (self.car.x >= 280) and (self.car.x >= 340) and (self.car.y >= 180) and (self.car.y <= 300)
+        in_wrong_parking_space = ((self.car.x >= 280) and (self.car.x >= 340) and ((self.car.y >= 60) and (self.car.y <= 180) or (self.car.y >= 300) and (self.car.y <= 540)))
+
+        # Calculate reward
+        reward = 0
+        if self.car.is_parked():
+            reward = 1000
+            print("parked")
+        elif boundary_hit or in_wrong_parking_space:
+            reward = -500
+            print("boundary or wrong parking space")
+        else:
+            reward -= 1
+            reward -= 5 * distance
+            print("distance to target: ", distance)
+            if not in_lane and not in_right_parking_spaces:
+                reward -= 100
+                print("wrong lane")
+        
         done = False
-        if boundary_hit or self.car.is_parked():
+        if boundary_hit or self.car.is_parked() or in_wrong_parking_space:
             done = True
         return state, reward, done
     
