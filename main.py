@@ -33,6 +33,7 @@ def main():
             step += 1
             total_reward += reward
             env.draw(env.car, episode+1, total_reward)
+            print(round(env.car.x, 2), round(env.car.y, 2), round(env.car.angle, 2))
 
             clock.tick(fps)
 

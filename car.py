@@ -1,6 +1,9 @@
 import pygame
 import math
 
+WIDTH_BIAS = 25
+HEIGHT_BIAS = 45
+
 class Car:
     def __init__(self, screen, x, y):
         self.screen = screen
@@ -8,13 +11,13 @@ class Car:
         self.height = 90
         self.car_image = pygame.image.load('car.png')
         self.car_image = pygame.transform.scale(self.car_image, (self.width, self.height))
-        self.x = x - self.width/2
-        self.y = y - self.height/2
+        self.x = x + self.width/2 
+        self.y = y + self.height/2
         self.speed = 2
         self.acceleration = 0
         self.max_speed = 5
         self.min_speed = -2
-        self.angle = 0
+        self.angle = 0 % 360
         self.friction = 0.01
 
     def update(self):
@@ -48,34 +51,34 @@ class Car:
 
         collided = False
 
-        if new_y < 15 or new_y > 495: # (y-45) Since y is y-height/2
+        if new_y < 60 or new_y > 540: # (y-45) Since y is y-height/2
             print("collided")
-            if new_x < 120:
-                new_x = 120
+            if new_x < 120 + WIDTH_BIAS:
+                new_x = 120 + WIDTH_BIAS
                 collided = True
-            if new_x > 280 - self.width:
-                new_x = 280 - self.width
+            if new_x > 280 - WIDTH_BIAS:
+                new_x = 280 - WIDTH_BIAS
                 collided = True
         else:
-            if (35 <= new_x <= 110 or 240 <= new_x <= 340) and new_y < 60:
-                new_y = 60
+            if (60 <= new_x <= 125 or 280 <= new_x <= 315) and new_y < 60 + HEIGHT_BIAS:
+                new_y = 60 + HEIGHT_BIAS
                 collided = True
-            if (35 <= new_x <= 110 or 240 <= new_x <= 340) and new_y > 540:
-                new_y = 540
+            if (60 <= new_x <= 125 or 280 <= new_x <= 315) and new_y > 540 - HEIGHT_BIAS:
+                new_y = 540 - HEIGHT_BIAS
                 collided = True   
 
-            if new_x < 60:
-                new_x = 60
+            if new_x < 85:
+                new_x = 85
                 collided = True
-            if new_x > 340 - self.width:
-                new_x = 340 - self.width
+            if new_x > 340 - WIDTH_BIAS:
+                new_x = 340 - WIDTH_BIAS
                 collided = True
 
-        if new_y + 1/5 * self.height < 0:
-            new_y = - 1/5 * self.height
+        if new_y - HEIGHT_BIAS < 0:
+            new_y = HEIGHT_BIAS
             collided = True
-        if new_y > self.screen.get_height() - 4/5*self.height:
-            new_y = self.screen.get_height() - 4/5*self.height
+        if new_y + HEIGHT_BIAS > self.screen.get_height() :
+            new_y = self.screen.get_height() - HEIGHT_BIAS
             collided = True
 
         self.x = new_x
@@ -91,5 +94,5 @@ class Car:
 
     def draw(self):
         rotated_image = pygame.transform.rotate(self.car_image, self.angle)
-        rect = rotated_image.get_rect(center=(self.x + self.width / 2, self.y + self.height/2))
+        rect = rotated_image.get_rect(center=(self.x, self.y))
         self.screen.blit(rotated_image, rect)

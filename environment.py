@@ -3,7 +3,6 @@ import numpy as np
 import math
 from car import Car
 
-
 class Environment:
     def __init__(self):
         pygame.init()
@@ -13,7 +12,7 @@ class Environment:
         
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.bg_color = (230, 230, 230)
-        self.car = Car(self.screen, self.screen_width/2 + 15, self.screen_height - 100)
+        self.car = Car(self.screen, self.screen_width/2 + 40, self.screen_height - 100)
 
         pygame.font.init()
         self.font = pygame.font.Font(None, 24)
@@ -91,7 +90,7 @@ class Environment:
 
     def reset(self):
         # Reset car position and angle
-        self.car.x = self.screen_width/2 + 15
+        self.car.x = self.screen_width/2 + 40
         self.car.y = self.screen_height - 100
         self.car.angle = 0
 
@@ -126,8 +125,8 @@ class Environment:
 
         # Define zones and penalties
         in_lane = 200 <= self.car.x <= 280
-        in_right_parking_spaces = (self.car.x >= 280) and (self.car.x >= 340) and (self.car.y >= 180) and (self.car.y <= 300)
-        in_wrong_parking_space_right = ((self.car.x >= 280) and (self.car.x >= 340) and (((self.car.y >= 60) and (self.car.y <= 180)) or ((self.car.y >= 300) and (self.car.y <= 540))))
+        in_right_parking_spaces = (self.car.x >= 280) and (self.car.x <= 340) and (self.car.y >= 180) and (self.car.y <= 300)
+        in_wrong_parking_space_right = ((self.car.x >= 280) and (self.car.x <= 340) and (((self.car.y >= 60) and (self.car.y <= 180)) or ((self.car.y >= 300) and (self.car.y <= 540))))
         # in_wrong_parking_space_left = ((self.car.x >= 60) and (self.car.x >= 120) and (self.car.y >= 60) and (self.car.y <= 540))
         # Calculate reward
         reward = 0
@@ -143,7 +142,7 @@ class Environment:
             reward -= 0.1
             reward -= 0.05 * distance
             print("distance to target: ", distance)
-            if not in_lane or not in_right_parking_spaces:
+            if not in_lane:
                 reward -= 100
                 print("wrong lane")
         
