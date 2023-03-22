@@ -135,9 +135,10 @@ class Environment:
             print("parked")
 
         # or in_wrong_parking_space_left
-        elif boundary_hit or in_wrong_parking_space_right:
+        if boundary_hit or in_wrong_parking_space_right:
             reward = -500
             print("boundary or wrong parking space")
+            
         else:
             reward -= 0.1
             reward -= 0.05 * distance
