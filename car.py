@@ -9,7 +9,7 @@ class Car:
         self.screen = screen
         self.width = 50
         self.height = 90
-        self.car_image = pygame.image.load('car.png')
+        self.car_image = pygame.image.load('assets/car.png')
         self.car_image = pygame.transform.scale(self.car_image, (self.width, self.height))
         self.x = x + self.width/2 
         self.y = y + self.height/2

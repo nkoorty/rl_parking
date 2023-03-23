@@ -63,18 +63,18 @@ class Environment:
         space_x = (self.screen_width / 2) + lane_width 
         space_y = (self.screen_height - num_spaces * (space_height)) / 2 
         for i in range(num_spaces):
+            parking_space_rect = pygame.Rect(space_x, space_y, space_width, space_height)
+            pygame.draw.rect(self.screen, space_color, parking_space_rect)
             if i == 1:
-                parking_space_rect = pygame.Rect(space_x, space_y, space_width, space_height)
-                pygame.draw.rect(self.screen, space_color, parking_space_rect)
-                pygame.draw.rect(self.screen, target_color, parking_space_rect, 2)
+                target_space_rect = parking_space_rect
             else:
-                parking_space_rect = pygame.Rect(space_x, space_y, space_width, space_height)
-                pygame.draw.rect(self.screen, space_color, parking_space_rect)
                 pygame.draw.rect(self.screen, border_color, parking_space_rect, 2)
             space_y += space_height - 2
 
+        # Draw the green border after drawing all the parking spaces
+        pygame.draw.rect(self.screen, target_color, target_space_rect, 2)
+
         # Draw multiple parking spaces on the left
-        num_spaces = 4  
         space_x = (self.screen_width / 2) - lane_width - space_width 
         space_y = (self.screen_height - num_spaces * (space_height)) / 2  
         for i in range(num_spaces):
