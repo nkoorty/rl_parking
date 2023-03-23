@@ -1,7 +1,10 @@
+from tensorflow.python.keras.models import load_model
 import tensorflow as tf
 import numpy as np
 import random
 from collections import deque
+
+print(tf.__version__)
 
 class DQNAgent:
     def __init__(self, state_size, action_size):
@@ -81,10 +84,8 @@ class DQNAgent:
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
             
-    def load(self, name):
-        # Load model weights
-        self.model.load_weights(name)
+    def load_model(self, file_path):
+        self.model = load_model(file_path)
         
-    def save(self, name):
-        # Save model weights
-        self.model.save(name)
+    def save_model(self, file_path):
+        self.model.save(file_path)

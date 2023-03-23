@@ -12,7 +12,7 @@ class Environment:
         
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.bg_color = (230, 230, 230)
-        self.car = Car(self.screen, self.screen_width/2 + 40, self.screen_height - 100)
+        self.car = Car(self.screen, self.screen_width/2 + 40, self.screen_height - 250)
 
         pygame.font.init()
         self.font = pygame.font.Font(None, 24)
@@ -91,7 +91,7 @@ class Environment:
     def reset(self):
         # Reset car position and angle
         self.car.x = self.screen_width/2 + 40
-        self.car.y = self.screen_height - 100
+        self.car.y = self.screen_height - 250
         self.car.angle = 0
 
         # Return initial state
@@ -104,7 +104,7 @@ class Environment:
         acceleration = 0
         angle = self.car.angle
         if action == 0:
-            acceleration += 3
+            acceleration += 2
         elif action == 1:
             acceleration -= 1
         elif action == 2:
@@ -124,8 +124,8 @@ class Environment:
         distance = math.sqrt((self.car.x - target_x)**2 + (self.car.y - target_y)**2)
 
         # Define zones and penalties
-        in_lane = 225 <= self.car.x <= 275
-        in_right_parking_space = (self.car.x >= 305) and (self.car.x <= 315) and (self.car.y >= 225) and (self.car.y <= 255) and (-10 <= self.car.angle % 360 <= 10)
+        in_lane = 225 <= self.car.x <= 350
+        in_right_parking_space = (self.car.x >= 290) and (self.car.x <= 330) and (self.car.y >= 225) and (self.car.y <= 255) and (-20 <= self.car.angle % 360 <= 20)
         in_wrong_parking_space_right = ((self.car.x >= 260) and (self.car.x <= 300) and (((self.car.y >= 40) and (self.car.y <= 200)) or ((self.car.y >= 280) and (self.car.y <= 560))))
         in_wrong_parking_space_left = ((self.car.x >= 60) and (self.car.x <= 145) and (self.car.y >= 35) and (self.car.y <= 565))
         # Calculate reward
@@ -144,15 +144,15 @@ class Environment:
             print("boundary or wrong parking space")
 
         else:
-            reward -= 0.1
-            reward += 12 - 0.05 * distance
+            reward -= 1
+            reward -= 0.05 * distance
             print("distance to target: ", distance)
             if not in_lane:
                 reward -= 100
                 print("wrong lane")
         
         done = False
-        if boundary_hit or in_right_parking_space or in_wrong_parking_space_right or in_wrong_parking_space_left: #or in_wrong_parking_space_left:
+        if boundary_hit or in_right_parking_space or in_wrong_parking_space_right or not in_lane: #or in_wrong_parking_space_left:
             done = True
         return state, reward, done
     

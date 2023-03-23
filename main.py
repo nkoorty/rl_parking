@@ -2,16 +2,20 @@ from environment import Environment
 from agent import DQNAgent
 import pygame
 import os
-import datetime
 
 def main():
     # Initialize environment and agent
     env = Environment()
     agent = DQNAgent(state_size=3, action_size=4)
 
+    # Load the saved model if it exists
+    model_file_path = "dqn_model.h5"
+    if os.path.exists(model_file_path):
+        agent.load_model(model_file_path)
+
     # Train the agent
-    episodes = 500
-    max_steps = 300  # Set your desired maximum number of steps per episode
+    episodes = 5
+    max_steps = 150  # Set your desired maximum number of steps per episode
     #render_after_episode = 300  # Set the episode number after which you want to start rendering
 
     clock = pygame.time.Clock()
@@ -40,23 +44,7 @@ def main():
         # Print progress
         print(f"Episode {episode+1}/{episodes}, Score: {reward}")
 
-
-    # Save the trained agent's weights
-    current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    weights_file = f"past_runs/weights_{current_time}.h5"
-    agent.save_weights(weights_file)
-    print(f"Agent's weights saved to {weights_file}")
-
-    # Test the trained agent
-    state = env.reset()
-    done = False
-    while not done:
-        action = agent.act(state, epsilon=0)
-
-        next_state, reward, done = env.step(action)
-
-        state = next_state
-
+    agent.save_model("past_runs/dqn_model.h5")
     # Quit the game
     env.quit()
 
