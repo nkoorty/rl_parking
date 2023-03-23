@@ -86,13 +86,7 @@ class Car:
 
         return collided 
     
-    def is_parked(self):
-        tolerance = 10
-        top_left = (280 - tolerance, 180 - tolerance)
-        bottom_right = (340 + tolerance, 300 + tolerance)
-        return (top_left[0] <= self.x <= bottom_right[0] and top_left[1] <= self.y <= bottom_right[1])
-
     def draw(self):
         rotated_image = pygame.transform.rotate(self.car_image, self.angle)
-        rect = rotated_image.get_rect(center=(self.x, self.y))
+        rect = rotated_image.get_rect(center=(self.x, self.y + self.height/4))
         self.screen.blit(rotated_image, rect)
