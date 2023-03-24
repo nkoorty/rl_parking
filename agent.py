@@ -23,7 +23,7 @@ class DQNAgent:
         self.epsilon_decay = 0.995
         
         # Learning rate
-        self.learning_rate = 0.001
+        self.learning_rate = 0.005
         
         # Initialize the model
         self.model = self._build_model()
