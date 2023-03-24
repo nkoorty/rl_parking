@@ -21,7 +21,6 @@ class Car:
         self.friction = 0.01
 
     def update(self):
-        # Apply friction
         if self.speed > 0:
             self.speed -= self.friction * self.speed
             if self.speed < 0:

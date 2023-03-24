@@ -23,11 +23,11 @@ def main():
     else:
         total_episodes = 0
 
-    episodes = 5
+    episodes = 1000
     max_steps = 150 
 
     clock = pygame.time.Clock()
-    fps = 30
+    fps = 60
 
     for episode in range(episodes):
         state = env.reset()
@@ -39,12 +39,13 @@ def main():
 
             next_state, reward, done = env.step(action)
             agent.remember(state, action, reward, next_state, done)
-            agent.learn(batch_size=4)
+            agent.learn(batch_size=1)
 
             state = next_state
             step += 1
             total_reward += reward
             env.draw(env.car, episode+1, total_reward)
+            env.draw_parking_box() 
             print(round(env.car.x, 2), round(env.car.y, 2), round(env.car.angle, 2))
 
             clock.tick(fps)

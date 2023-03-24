@@ -88,6 +88,19 @@ class Environment:
         self.draw_text(f"Reward: {reward:.2f}", 10, 35)
         pygame.display.flip()
 
+    def draw_parking_box(self):
+        # Define parking box dimensions and position
+        x, y, width, height = 290, 225, 40, 30
+
+        # Create a transparent surface with white border
+        parking_box_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+        parking_box_color = (255, 255, 255, 128)  # White color with 50% transparency
+        border_thickness = 2
+        pygame.draw.rect(parking_box_surface, parking_box_color, (0, 0, width, height), border_thickness)
+
+        # Draw the transparent surface onto the main surface
+        self.screen.blit(parking_box_surface, (x, y))
+
     def reset(self):
         # Reset car position and angle
         self.car.x = self.screen_width/2 + 40
@@ -99,7 +112,6 @@ class Environment:
         return state
 
     def step(self, action):
-        # Take action in the environment and observe the next state and reward
         # Update the car based on the action
         acceleration = 0
         angle = self.car.angle
