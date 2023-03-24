@@ -9,19 +9,21 @@ def main():
     env = Environment()
     agent = DQNAgent(state_size=3, action_size=4)
 
-    # Load the saved model if it exists
-    model_file_path = "dqn_model.h5"
+    model_file_path = "urf_01.h5"
     episode_count_file = "episode_count.csv"
     if os.path.exists(model_file_path):
         agent.load_model(model_file_path)
 
     # Load previous episode count from file
+    episode_count_map = {}
     if os.path.exists(episode_count_file):
         with open(episode_count_file, "r") as f:
             reader = csv.reader(f)
-            total_episodes = int(next(reader)[0])
-    else:
-        total_episodes = 0
+            for row in reader:
+                model, count = row
+                episode_count_map[model] = int(count)
+
+    total_episodes = episode_count_map.get(model_file_path, 0)
 
     episodes = 1000
     max_steps = 150 
@@ -45,7 +47,6 @@ def main():
             step += 1
             total_reward += reward
             env.draw(env.car, episode+1, total_reward)
-            env.draw_parking_box() 
             print(round(env.car.x, 2), round(env.car.y, 2), round(env.car.angle, 2))
 
             clock.tick(fps)
@@ -53,10 +54,12 @@ def main():
         # Save model and update total episode count
         total_episodes += 1
         if total_episodes % 5 == 0:
-            agent.save_model("past_runs/dqn_model.h5")
+            agent.save_model(model_file_path)
+            episode_count_map[model_file_path] = total_episodes
             with open(episode_count_file, "w") as f:
                 writer = csv.writer(f)
-                writer.writerow([total_episodes])
+                for model, count in episode_count_map.items():
+                    writer.writerow([model, count])
 
             # Print progress
             print(f"Episode {episode+1}/{total_episodes}, Score: {reward}")

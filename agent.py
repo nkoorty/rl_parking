@@ -82,7 +82,7 @@ class DQNAgent:
             self.epsilon *= self.epsilon_decay
             
     def load_model(self, file_path):
-        self.model = load_model(file_path)
+        self.model.load_weights(file_path)
         
     def save_model(self, file_path):
-        self.model.save(file_path)
+        self.model.save_weights(file_path)

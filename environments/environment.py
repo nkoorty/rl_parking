@@ -84,21 +84,27 @@ class Environment:
             space_y += space_height - 2
 
         self.car.draw()
+
+        target_x, target_y = 310, 240
+        self.draw_line_to_target(car, target_x, target_y)
+        self.draw_parking_box()
         self.draw_text(f"Episode: {episode}", 10, 10)
         self.draw_text(f"Reward: {reward:.2f}", 10, 35)
         pygame.display.flip()
 
+    def draw_line_to_target(self, car, target_x, target_y, color=(255, 0, 0)):
+        car_midpoint_x, car_midpoint_y = self.car.x, self.car.y
+        pygame.draw.line(self.screen, color, (car_midpoint_x, car_midpoint_y), (target_x, target_y), 5)
+
+
     def draw_parking_box(self):
-        # Define parking box dimensions and position
         x, y, width, height = 290, 225, 40, 30
 
-        # Create a transparent surface with white border
         parking_box_surface = pygame.Surface((width, height), pygame.SRCALPHA)
-        parking_box_color = (255, 255, 255, 128)  # White color with 50% transparency
+        parking_box_color = (255, 255, 255, 128)
         border_thickness = 2
         pygame.draw.rect(parking_box_surface, parking_box_color, (0, 0, width, height), border_thickness)
 
-        # Draw the transparent surface onto the main surface
         self.screen.blit(parking_box_surface, (x, y))
 
     def reset(self):
@@ -120,9 +126,9 @@ class Environment:
         elif action == 1:
             acceleration -= 1
         elif action == 2:
-            angle += 4
+            angle += 10
         elif action == 3:
-            angle -= 4
+            angle -= 10
 
         self.car.acceleration = acceleration
         self.car.angle = angle
@@ -136,32 +142,39 @@ class Environment:
         distance = math.sqrt((self.car.x - target_x)**2 + (self.car.y - target_y)**2)
 
         # Define zones and penalties
-        in_lane = 225 <= self.car.x <= 350
+        in_lane = 215 <= self.car.x <= 315
         in_right_parking_space = (self.car.x >= 290) and (self.car.x <= 330) and (self.car.y >= 225) and (self.car.y <= 255) and (-20 <= self.car.angle % 360 <= 20)
         in_wrong_parking_space_right = ((self.car.x >= 260) and (self.car.x <= 300) and (((self.car.y >= 40) and (self.car.y <= 200)) or ((self.car.y >= 280) and (self.car.y <= 560))))
         in_wrong_parking_space_left = ((self.car.x >= 60) and (self.car.x <= 145) and (self.car.y >= 35) and (self.car.y <= 565))
+
+        target_angle = 0
+        angle_error = abs(self.car.angle % 360 - target_angle)
+        speed_error = abs(self.car.speed)
+
         # Calculate reward
         reward = 0
+
+        # Proximity to target parking space
+        reward -= 0.001 * distance
+
+        # Angle error
+        reward -= 0.002 * angle_error
+
+        # Speed error
+        reward -= 0.002 * speed_error
+
+        # Time penalty
+        reward -= 0.1
+
         if in_right_parking_space:
-            reward = 5000
+            reward += 10
             print("parked")
-
-        if in_wrong_parking_space_left:
-            reward = -1000
-            print("wrong parking space")
-
-        # or in_wrong_parking_space_left
-        if boundary_hit or in_wrong_parking_space_right:
-            reward = -500
+        elif boundary_hit or in_wrong_parking_space_right or in_wrong_parking_space_left:
+            reward -= 10
             print("boundary or wrong parking space")
 
-        else:
-            reward -= 1
-            reward -= 0.05 * distance
-            print("distance to target: ", distance)
-            if not in_lane:
-                reward -= 100
-                print("wrong lane")
+        # Clip reward to a minimum and maximum value
+        reward = np.clip(reward, -10, 10)
         
         done = False
         if boundary_hit or in_right_parking_space or in_wrong_parking_space_right or not in_lane: #or in_wrong_parking_space_left:
