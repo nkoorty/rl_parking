@@ -209,10 +209,10 @@ class Environment:
         distance_to_curve = self.distance_to_bezier(self.car.x, self.car.y)
 
         reward = 0
-        reward -= 0.01 * distance
+        reward -= 0.005 * distance
         reward -= 0.001 * angle_error
-        reward -= 0.01 * distance_to_curve
-        reward -= 0.1
+        reward -= 0.05 * distance_to_curve
+        reward -= 0.05
 
         if in_lane:
             reward += 0.05
@@ -220,10 +220,10 @@ class Environment:
             reward += 1
 
         if in_right_parking_space:
-            reward += 30
+            reward += 80
             print("parked")
         elif boundary_hit or in_wrong_parking_space_right:
-            reward -= 20
+            reward -= 50
             print("boundary or wrong parking space")
 
         reward = np.clip(reward, -100, 100)
