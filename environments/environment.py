@@ -142,10 +142,9 @@ class Environment:
         distance = math.sqrt((self.car.x - target_x)**2 + (self.car.y - target_y)**2)
 
         # Define zones and penalties
-        in_lane = 215 <= self.car.x <= 315
-        in_right_parking_space = (self.car.x >= 290) and (self.car.x <= 330) and (self.car.y >= 225) and (self.car.y <= 255) and (-20 <= self.car.angle % 360 <= 20)
+        in_lane = 215 <= self.car.x
+        in_right_parking_space = (self.car.x >= 290) and (self.car.x <= 330) and (self.car.y >= 200) and (self.car.y <= 280) and (-20 <= self.car.angle % 360 <= 20)
         in_wrong_parking_space_right = ((self.car.x >= 260) and (self.car.x <= 300) and (((self.car.y >= 40) and (self.car.y <= 200)) or ((self.car.y >= 280) and (self.car.y <= 560))))
-        in_wrong_parking_space_left = ((self.car.x >= 60) and (self.car.x <= 145) and (self.car.y >= 35) and (self.car.y <= 565))
 
         target_angle = 0
         angle_error = abs(self.car.angle % 360 - target_angle)
@@ -153,23 +152,21 @@ class Environment:
 
         # Calculate reward
         reward = 0
-
-        # Proximity to target parking space
         reward -= 0.001 * distance
-
-        # Angle error
         reward -= 0.002 * angle_error
-
-        # Speed error
         reward -= 0.002 * speed_error
-
-        # Time penalty
         reward -= 0.1
+
+        # Intermediate rewards
+        if in_lane:
+            reward += 0.05
+        if 290 <= self.car.x <= 330:
+            reward += 1
 
         if in_right_parking_space:
             reward += 10
             print("parked")
-        elif boundary_hit or in_wrong_parking_space_right or in_wrong_parking_space_left:
+        elif boundary_hit or in_wrong_parking_space_right:
             reward -= 10
             print("boundary or wrong parking space")
 
