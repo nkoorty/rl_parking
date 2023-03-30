@@ -1,4 +1,3 @@
-from tensorflow.python.keras.models import load_model
 import tensorflow as tf
 import numpy as np
 import random
