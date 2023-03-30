@@ -9,7 +9,7 @@ def main():
     env = Environment()
     agent = DQNAgent(state_size=3, action_size=4)
 
-    model_file_path = "past_runs/urf_05.h5"
+    model_file_path = "past_runs/urf_13.h5"
     episode_count_file = "episode_count.csv"
     if os.path.exists(model_file_path):
         agent.load_model(model_file_path)
@@ -25,8 +25,8 @@ def main():
 
     total_episodes = episode_count_map.get(model_file_path, 0)
 
-    episodes = 1000
-    max_steps = 150 
+    episodes = 10000
+    max_steps = 80 
 
     clock = pygame.time.Clock()
     fps = 60
@@ -64,7 +64,7 @@ def main():
             # Print progress
             print(f"Episode {episode+1}/{total_episodes}, Score: {reward}")
 
-    agent.save_model("past_runs/urf_05.h5")
+    agent.save_model("past_runs/urf_13.h5")
     # Quit the game
     env.quit()
 

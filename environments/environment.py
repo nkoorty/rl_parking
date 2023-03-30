@@ -204,29 +204,24 @@ class Environment:
         in_right_parking_space = (self.car.x >= 290) and (self.car.x <= 330) and (self.car.y >= 200) and (self.car.y <= 280) and (-20 <= self.car.angle % 360 <= 20)
         in_wrong_parking_space_right = ((self.car.x >= 260) and (self.car.x <= 300) and (((self.car.y >= 40) and (self.car.y <= 200)) or ((self.car.y >= 280) and (self.car.y <= 560))))
 
-        target_angle = 0
-        angle_error = abs(self.car.angle % 360 - target_angle)
         distance_to_curve = self.distance_to_bezier(self.car.x, self.car.y)
 
         reward = 0
-        reward -= 0.005 * distance
-        reward -= 0.001 * angle_error
-        reward -= 0.05 * distance_to_curve
-        reward -= 0.05
+        reward -= 0.01 * distance
 
-        if in_lane:
-            reward += 0.05
-        if 275 <= self.car.x <= 330:
+        if distance_to_curve < 10:
             reward += 1
+        elif distance_to_curve < 20:
+            reward += 0.5
+        else:
+            reward -= 0.5
 
         if in_right_parking_space:
-            reward += 80
+            reward += 500
             print("parked")
         elif boundary_hit or in_wrong_parking_space_right:
-            reward -= 50
+            reward -= 500
             print("boundary or wrong parking space")
-
-        reward = np.clip(reward, -100, 100)
         
         done = False
         if boundary_hit or in_right_parking_space or in_wrong_parking_space_right or not in_lane: #or in_wrong_parking_space_left:
