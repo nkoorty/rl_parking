@@ -21,6 +21,10 @@ class Car:
         self.friction = 0.01
 
     def update(self):
+        self.prev_x = self.x
+        self.prev_y = self.y
+        self.prev_angle = self.angle
+    
         if self.speed > 0:
             self.speed -= self.friction * self.speed
             if self.speed < 0:
@@ -71,6 +75,47 @@ class Car:
                 collided = True
             if new_x > 340 - WIDTH_BIAS:
                 new_x = 340 - WIDTH_BIAS
+                collided = True
+
+        if new_y - HEIGHT_BIAS < 0:
+            new_y = HEIGHT_BIAS
+            collided = True
+        if new_y + HEIGHT_BIAS > self.screen.get_height() :
+            new_y = self.screen.get_height() - HEIGHT_BIAS
+            collided = True
+
+        self.x = new_x
+        self.y = new_y
+
+        return collided 
+    
+    def handle_boundary_perpendicular(self):
+        new_x = self.x
+        new_y = self.y
+
+        collided = False
+
+        if new_y < 180 or new_y > 420: # (y-45) Since y is y-height/2
+            print("collided")
+            if new_x < 120 + WIDTH_BIAS:
+                new_x = 120 + WIDTH_BIAS
+                collided = True
+            if new_x > 280 - WIDTH_BIAS:
+                new_x = 280 - WIDTH_BIAS
+                collided = True
+        else:
+            if (0 <= new_x <= 140 or 290 <= new_x <= 400) and new_y < 170 + HEIGHT_BIAS:
+                new_y = 170 + HEIGHT_BIAS
+                collided = True
+            if (0 <= new_x <= 140 or 290 <= new_x <= 400) and new_y > 420 - HEIGHT_BIAS:
+                new_y = 420 - HEIGHT_BIAS
+                collided = True   
+
+            if new_x < 45:
+                new_x = 45
+                collided = True
+            if new_x > 380 - WIDTH_BIAS:
+                new_x = 380 - WIDTH_BIAS
                 collided = True
 
         if new_y - HEIGHT_BIAS < 0:
