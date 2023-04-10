@@ -1,4 +1,6 @@
-from environment import Environment
+from parallel_parking import Environment
+from perpen_parking import ParkingEnv
+from agent_test import DQNAgent_Test
 from agent import DQNAgent
 import pygame
 import os
@@ -8,7 +10,7 @@ def main():
     env = Environment()
     agent = DQNAgent(state_size=3, action_size=4)
 
-    model_file_path = "past_runs/urf_25.h5"
+    model_file_path = "past_runs/parallel_4.h5"
     episode_count_file = "episode_count.csv"
     if os.path.exists(model_file_path):
         agent.load_model(model_file_path)
@@ -28,7 +30,7 @@ def main():
     max_steps = 80 
 
     clock = pygame.time.Clock()
-    fps = 60
+    fps = 30
 
     for episode in range(episodes):
         # Reset states for all agents
@@ -36,23 +38,39 @@ def main():
         done = False
         step = 0
         total_reward = 0
-        while not done and step < max_steps:
-            action = agent.act(state)
 
+        pygame.key.set_repeat(10, 10)
+        while not done and step < max_steps:
+            delay = 0
+            """
+            human_action = None
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        human_action = 0
+                    elif event.key == pygame.K_DOWN:
+                        human_action = 1
+                    elif event.key == pygame.K_LEFT:
+                        human_action = 2
+                    elif event.key == pygame.K_RIGHT:
+                        human_action = 3
+            """
+            action = agent.act(state) #, human_action=human_action)
             next_state, reward, done = env.step(action)
-            agent.remember(state, action, reward, next_state, done)
+            agent.remember(state, action, reward, next_state, done) #, human_action)
 
             state = next_state
             step += 1
             total_reward += reward
             env.draw(env.car, episode+1, total_reward)
-            print(round(env.car.x, 2), round(env.car.y, 2), round(env.car.angle, 2))
+            print(round(env.car.x, 2), round(env.car.y, 2), round(env.car.angle, 2), round(env.car.speed,2))
 
             clock.tick(fps)
+            pygame.time.delay(delay)
 
-        agent.learn(batch_size=5)
+        agent.learn(batch_size=8)
 
-        # Save model and update total episode count
         total_episodes += 1
         if total_episodes % 5 == 0:
             agent.save_model(model_file_path)
@@ -64,7 +82,7 @@ def main():
 
             print(f"Episode {episode+1}/{total_episodes}, Score: {reward}")
 
-    agent.save_model("past_runs/urf_25.h5")
+    agent.save_model("past_runs/parallel_4.h5")
     env.quit()
 
 if __name__ == "__main__":

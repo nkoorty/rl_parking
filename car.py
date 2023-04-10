@@ -13,9 +13,9 @@ class Car:
         self.car_image = pygame.transform.scale(self.car_image, (self.width, self.height))
         self.x = x + self.width/2 
         self.y = y + self.height/2
-        self.speed = 2
+        self.speed = 0
         self.acceleration = 0
-        self.max_speed = 5
+        self.max_speed = 4
         self.min_speed = -2
         self.angle = 0 % 360
         self.friction = 0.01
@@ -55,7 +55,6 @@ class Car:
         collided = False
 
         if new_y < 60 or new_y > 540: # (y-45) Since y is y-height/2
-            print("collided")
             if new_x < 120 + WIDTH_BIAS:
                 new_x = 120 + WIDTH_BIAS
                 collided = True
