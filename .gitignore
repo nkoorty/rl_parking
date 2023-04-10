@@ -2,3 +2,6 @@ __pycache__/agent.cpython-38.pyc
 environment-manual.py
 __pycache__/environment.cpython-38.pyc
 __pycache__/car.cpython-38.pyc
+__pycache__/perpen_parking.cpython-38.pyc
+.gitignore
+past_runs/.DS_Store
