@@ -9,17 +9,16 @@ class DQNAgent:
         self.action_size = action_size
         
         self.memory = deque(maxlen=10000)
-        # self.memory_human = deque(maxlen=2000)  # New human memory
         self.gamma = 0.97
         self.epsilon = 0.80
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.96
         self.learning_rate = 0.001
-        self.update_target_freq = 100  # Frequency for updating the target network
-        self.update_target_freq_counter = 0  # Counter for updating the target network
+        self.update_target_freq = 100 
+        self.update_target_freq_counter = 0  
         self.model = self._build_model()
-        self.target_model = self._build_model()  # Create target network
-        self.update_target_model()  # Initialize target network with same weights as the main network
+        self.target_model = self._build_model()  
+        self.update_target_model()  
 
     def _build_model(self):
         model = tf.keras.models.Sequential([
@@ -72,7 +71,6 @@ class DQNAgent:
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
-        # Update target network
         self.update_target_freq_counter += 1
         if self.update_target_freq_counter >= self.update_target_freq:
             self.update_target_model()
