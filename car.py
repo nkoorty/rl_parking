@@ -95,7 +95,6 @@ class Car:
         collided = False
 
         if new_y < 180 or new_y > 420: # (y-45) Since y is y-height/2
-            print("collided")
             if new_x < 120 + WIDTH_BIAS:
                 new_x = 120 + WIDTH_BIAS
                 collided = True

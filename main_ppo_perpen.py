@@ -6,27 +6,34 @@ import pygame
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.env_util import make_vec_env
-from parallel_parking import Environment
+from perpen_parking import ParkingEnv
 
 class CustomParkingEnvironment(gym.Env):
     def __init__(self):
         super(CustomParkingEnvironment, self).__init__()
-        self.env = Environment()
+        self.env = ParkingEnv()
         self.action_space = gym.spaces.Discrete(4)
         self.observation_space = gym.spaces.Box(low=np.array([0, 0, -360]),
                                                 high=np.array([400, 600, 360]),
                                                 dtype=np.float32)
+        self.current_step = 0 
+        self.max_episode_steps = 250 
 
     def step(self, action):
         state, reward, done = self.env.step(action)
+        self.current_step += 1 
+        if self.current_step >= self.max_episode_steps: 
+            done = True 
+        
         return state, reward, done, {}
 
     def reset(self):
         state = self.env.reset()
+        self.current_step = 0
         return state
 
-    def render(self, mode='human'):  # Updated render() method definition
-        self.env.render()  # Updated render() method call
+    def render(self, mode='human'):
+        self.env.render()  
 
 def main():
     env = make_vec_env(CustomParkingEnvironment, n_envs=1)
@@ -44,14 +51,14 @@ def main():
     "max_grad_norm": 0.5,
     }
 
-    model_file_path = "past_runs/parallel_6_ppo.zip"
+    model_file_path = "past_runs/tweak_3.zip"
     if os.path.exists(model_file_path):
         model = PPO.load(model_file_path, env, **hyperparams)
     else:
         model = PPO("MlpPolicy", env, verbose=1, **hyperparams)
 
-    total_episodes = 10000
-    total_timesteps = 800000
+    total_episodes = 1000
+    total_timesteps = 200000
     model.learn(total_timesteps=total_timesteps)
 
     # Save the trained model

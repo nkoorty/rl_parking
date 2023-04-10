@@ -13,7 +13,7 @@ class ParkingEnv(Environment):
         lane_width = 80
         lane_height = self.screen_height
         space_width = 120
-        space_height = 65
+        space_height = 70
         
         # Set colors for lanes and parking spaces
         lane_color = (100, 100, 100)
@@ -91,7 +91,7 @@ class ParkingEnv(Environment):
         pygame.display.flip()
 
     def draw_parking_box(self):
-        x, y, width, height = 325, 245, 30, 40
+        x, y, width, height = 325, 250, 30, 30
 
         parking_box_surface = pygame.Surface((width, height), pygame.SRCALPHA)
         parking_box_color = (255, 255, 255, 128)
@@ -166,27 +166,17 @@ class ParkingEnv(Environment):
         distance = math.sqrt((self.car.x - target_x)**2 + (self.car.y - target_y)**2)
 
         in_lane = 215 <= self.car.x
-        in_right_parking_space = (self.car.x >= 325) and (self.car.x <= 355) and (self.car.y >= 245) and (self.car.y <= 285) and (75 <= abs(self.car.angle) % 360 <= 105)
-        in_wrong_parking_space_right = ((self.car.x >= 260) and (self.car.x <= 400) and (((self.car.y >= 175) and (self.car.y <= 210)) or ((self.car.y >= 310) and (self.car.y <= 425))))
+        in_right_parking_space = (self.car.x >= 325) and (self.car.x <= 355) and (self.car.y >= 260) and (self.car.y <= 270) and (85 <= abs(self.car.angle) % 360 <= 95)
+        in_wrong_parking_space_right = ((self.car.x >= 260) and (self.car.x <= 400) and (((self.car.y >= 160) and (self.car.y <= 240)) or ((self.car.y >= 290) and (self.car.y <= 425))))
 
-        # Constants for reward calculation
-        p = 3000
-        rp = 1
-        rtheta = 1
+        p = 500
         crash_penalty = -300
-        time_penalty = -0.2
-        movement_penalty = 0.75
-        smoothness_penalty = -5
-        direction_penalty = -5
+        time_penalty = -0.5
+        bezier_penalty = -2
+        movement_penalty = 2
 
-        # Calculate angular velocity
-        angular_velocity = abs(self.car.angle - self.car.prev_angle)
-
-        # Calculate rotation difference
         parking_rotation = 0
         rotation_difference = abs(self.car.angle - parking_rotation)
-
-        # Calculate the direction to the target
         target_dir = math.atan2(target_y - self.car.y, target_x - self.car.x)
         direction_diff = abs(target_dir - self.car.angle)
 
@@ -197,22 +187,22 @@ class ParkingEnv(Environment):
         reward = 0
         done = False
         if in_right_parking_space:
-            reward = p - rp * abs(self.car.speed) - rtheta * rotation_difference
+            reward = p
             print("parked")
             done = True
-        elif self.distance_to_bezier(self.car.x, self.car.y) > 60:
+        elif self.distance_to_bezier(self.car.x, self.car.y) > 20:
             reward = crash_penalty
+            done = True
+        elif boundary_hit:
+            reward = crash_penalty
+            print("collided")
             done = True
         else:
             reward += time_penalty
-            reward += direction_diff * direction_penalty 
             if distance < prev_distance:
-                reward += movement_penalty * (prev_distance - distance)
+                reward += movement_penalty
             else:
-                reward -= movement_penalty * (distance - prev_distance)
-            reward += smoothness_penalty * angular_velocity
-
-        done = done or not in_lane
+                reward -= movement_penalty 
         return state, reward, done
     
     def run(self):

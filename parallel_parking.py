@@ -28,7 +28,7 @@ class Environment:
         # Set lane and parking space dimensions
         lane_width = 80
         lane_height = self.screen_height
-        space_width = 60
+        space_width = 70
         space_height = 120
         
         # Set colors for lanes and parking spaces
@@ -218,7 +218,7 @@ class Environment:
         # Constants for reward calculation
         p = 500
         crash_penalty = -300
-        time_penalty = -2
+        time_penalty = -1
         movement_penalty = 0.75
         # smoothness_penalty = -2
         # direction_penalty = -2
@@ -244,7 +244,7 @@ class Environment:
             reward = p
             print("parked")
             done = True
-        elif boundary_hit or in_wrong_parking_space_right:
+        elif boundary_hit:
             reward = crash_penalty
             print("collided")
             done = True
