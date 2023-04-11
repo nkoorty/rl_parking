@@ -15,7 +15,7 @@ class Car:
         self.y = y + self.height/2
         self.speed = 0
         self.acceleration = 0
-        self.max_speed = 4
+        self.max_speed = 5
         self.min_speed = -2
         self.angle = 0 % 360
         self.friction = 0.01
@@ -125,7 +125,6 @@ class Car:
 
         self.x = new_x
         self.y = new_y
-
         return collided 
     
     def draw(self):

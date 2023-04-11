@@ -33,7 +33,6 @@ def main():
     fps = 30
 
     for episode in range(episodes):
-        # Reset states for all agents
         state = env.reset()
         done = False
         step = 0
@@ -42,23 +41,9 @@ def main():
         pygame.key.set_repeat(10, 10)
         while not done and step < max_steps:
             delay = 0
-            """
-            human_action = None
-
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP:
-                        human_action = 0
-                    elif event.key == pygame.K_DOWN:
-                        human_action = 1
-                    elif event.key == pygame.K_LEFT:
-                        human_action = 2
-                    elif event.key == pygame.K_RIGHT:
-                        human_action = 3
-            """
-            action = agent.act(state) #, human_action=human_action)
+            action = agent.act(state)
             next_state, reward, done = env.step(action)
-            agent.remember(state, action, reward, next_state, done) #, human_action)
+            agent.remember(state, action, reward, next_state, done)
 
             state = next_state
             step += 1

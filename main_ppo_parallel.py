@@ -17,7 +17,7 @@ class CustomParkingEnvironment(gym.Env):
                                                 high=np.array([400, 600, 360]),
                                                 dtype=np.float32)
         self.current_step = 0 
-        self.max_episode_steps = 150
+        self.max_episode_steps = 120
 
     def step(self, action):
         state, reward, done = self.env.step(action)
@@ -35,7 +35,7 @@ class CustomParkingEnvironment(gym.Env):
         self.env.render()  
 
 def main():
-    file = "parallel_1_ppo"
+    file = "parallel_61_ppo"
     env = make_vec_env(CustomParkingEnvironment, n_envs=1)
 
     hyperparams = {
@@ -58,7 +58,7 @@ def main():
         model = PPO("MlpPolicy", env, verbose=1, **hyperparams, tensorboard_log="data/")
 
     total_episodes = 5000
-    total_timesteps = 150000
+    total_timesteps = 100000
 
     log_dir = "data/"
     os.makedirs(log_dir, exist_ok=True)
