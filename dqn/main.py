@@ -1,6 +1,5 @@
 from parallel_parking import Environment
 from perpen_parking import ParkingEnv
-from agent_test import DQNAgent_Test
 from dqn.agent import DQNAgent
 import pygame
 import os
