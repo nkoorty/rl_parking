@@ -11,4 +11,7 @@ dependencies:
   - gym
   - stable-baselines3
   - tensorboard
+  - protobuf
+  - grpcio
+  - matplotlib
   

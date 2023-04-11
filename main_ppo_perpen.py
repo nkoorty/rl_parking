@@ -17,7 +17,7 @@ class CustomParkingEnvironment(gym.Env):
                                                 high=np.array([400, 600, 360]),
                                                 dtype=np.float32)
         self.current_step = 0 
-        self.max_episode_steps = 250 
+        self.max_episode_steps = 200
 
     def step(self, action):
         state, reward, done = self.env.step(action)
@@ -36,6 +36,7 @@ class CustomParkingEnvironment(gym.Env):
         self.env.render()  
 
 def main():
+    file = "perpen_12_ppo"
     env = make_vec_env(CustomParkingEnvironment, n_envs=1)
 
     hyperparams = {
@@ -51,22 +52,24 @@ def main():
     "max_grad_norm": 0.5,
     }
 
-    model_file_path = "past_runs/tweak_3.zip"
+    model_file_path = f"past_runs/{file}.zip"
     if os.path.exists(model_file_path):
-        model = PPO.load(model_file_path, env, **hyperparams)
+        model = PPO.load(model_file_path, env, **hyperparams, tensorboard_log="data/")
     else:
-        model = PPO("MlpPolicy", env, verbose=1, **hyperparams)
+        model = PPO("MlpPolicy", env, verbose=1, **hyperparams, tensorboard_log="data/")
 
-    total_episodes = 1000
-    total_timesteps = 200000
-    model.learn(total_timesteps=total_timesteps)
+    total_episodes = 5000
+    total_timesteps = 100
 
-    # Save the trained model
-    model.save(model_file_path)
+    log_dir = "data/"
+    os.makedirs(log_dir, exist_ok=True)
+
+    model.learn(total_timesteps=total_timesteps, tb_log_name=f"{file}")
+    model.save(model_file_path) 
 
     clock = pygame.time.Clock()
 
-    fps = 60
+    fps = 30
     episode_length = 0
 
     for episode in range(total_episodes):

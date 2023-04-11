@@ -16,19 +16,26 @@ class CustomParkingEnvironment(gym.Env):
         self.observation_space = gym.spaces.Box(low=np.array([0, 0, -360]),
                                                 high=np.array([400, 600, 360]),
                                                 dtype=np.float32)
+        self.current_step = 0 
+        self.max_episode_steps = 150
 
     def step(self, action):
         state, reward, done = self.env.step(action)
+        self.current_step += 1 
+        if self.current_step >= self.max_episode_steps: 
+            done = True 
         return state, reward, done, {}
 
     def reset(self):
         state = self.env.reset()
+        self.current_step = 0
         return state
 
-    def render(self, mode='human'):  # Updated render() method definition
-        self.env.render()  # Updated render() method call
+    def render(self, mode='human'):
+        self.env.render()  
 
 def main():
+    file = "parallel_1_ppo"
     env = make_vec_env(CustomParkingEnvironment, n_envs=1)
 
     hyperparams = {
@@ -44,22 +51,24 @@ def main():
     "max_grad_norm": 0.5,
     }
 
-    model_file_path = "past_runs/parallel_7_ppo.zip"
+    model_file_path = f"past_runs/{file}.zip"
     if os.path.exists(model_file_path):
-        model = PPO.load(model_file_path, env, **hyperparams)
+        model = PPO.load(model_file_path, env, **hyperparams, tensorboard_log="data/")
     else:
-        model = PPO("MlpPolicy", env, verbose=1, **hyperparams)
+        model = PPO("MlpPolicy", env, verbose=1, **hyperparams, tensorboard_log="data/")
 
-    total_episodes = 10000
-    total_timesteps = 400000
-    model.learn(total_timesteps=total_timesteps)
+    total_episodes = 5000
+    total_timesteps = 150000
 
-    # Save the trained model
-    model.save(model_file_path)
+    log_dir = "data/"
+    os.makedirs(log_dir, exist_ok=True)
+
+    model.learn(total_timesteps=total_timesteps, tb_log_name=f"{file}")
+    model.save(model_file_path) 
 
     clock = pygame.time.Clock()
 
-    fps = 60
+    fps = 30
     episode_length = 0
 
     for episode in range(total_episodes):

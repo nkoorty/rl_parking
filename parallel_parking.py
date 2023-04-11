@@ -8,20 +8,20 @@ class Environment:
         pygame.init()
 
         self.screen_width = 400
-        self.screen_height = 600
-        
+        self.screen_height = 600   
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.bg_color = (230, 230, 230)
         self.car = Car(self.screen, self.screen_width/2 + 40, self.screen_height - 250)
 
-        pygame.font.init()
-        self.font = pygame.font.Font(None, 24)
-    
-    def draw_text(self, text, x, y, color=(255, 255, 255)):
-        text_surface = self.font.render(text, True, color)
-        self.screen.blit(text_surface, (x, y))
+        self.P0 = (240, 350)
+        self.P1 = (240, 290)
+        self.P2 = (280, 270)
+        self.P3 = (315, 260)
+        self.P4 = (315, 240)
 
-    def draw(self, car, episode, reward):
+        pygame.font.init()
+
+    def draw(self, car):
         # Fill screen with background color
         self.screen.fill(self.bg_color)
         
@@ -82,29 +82,19 @@ class Environment:
             pygame.draw.rect(self.screen, space_color, parking_space_rect)
             pygame.draw.rect(self.screen, border_color, parking_space_rect, 2)
             space_y += space_height - 2
-
-
         car.draw()
-
-        P0 = (240, 350)
-        P1 = (240, 290)
-        P2 = (280, 260)
-        P3 = (310, 245)
-        P4 = (310, 230)
 
         num_segments = 100
         for i in range(num_segments):
             t1 = i / num_segments
             t2 = (i + 1) / num_segments
 
-            point1 = self.bezier_point(t1, P0, P1, P2, P3, P4)
-            point2 = self.bezier_point(t2, P0, P1, P2, P3, P4)
+            point1 = self.bezier_point(t1, self.P0, self.P1, self.P2, self.P3, self.P4)
+            point2 = self.bezier_point(t2, self.P0, self.P1, self.P2, self.P3, self.P4)
             pygame.draw.line(self.screen, (255, 255, 255, 128), point1, point2, 2)
 
         self.draw_line_to_bezier()
         self.draw_parking_box()
-        self.draw_text(f"Episode: {episode}", 10, 10)
-        self.draw_text(f"Reward: {reward:.2f}", 10, 35)
         pygame.display.flip()
 
     def draw_line_to_bezier(self):
@@ -112,16 +102,10 @@ class Environment:
         num_points = 100
         closest_point = None
         closest_distance = float('inf')
-        
-        P0 = (240, 350)
-        P1 = (240, 290)
-        P2 = (280, 270)
-        P3 = (310, 260)
-        P4 = (310, 240)
 
         for i in range(num_points):
             t = i / (num_points - 1)
-            point = self.bezier_point(t, P0, P1, P2, P3, P4)
+            point = self.bezier_point(t, self.P0, self.P1, self.P2, self.P3, self.P4)
             distance = math.sqrt((car_midpoint_x - point[0])**2 + (car_midpoint_y - point[1])**2)
             if distance < closest_distance:
                 closest_distance = distance
@@ -141,7 +125,7 @@ class Environment:
         return (x, y)
 
     def draw_parking_box(self):
-        x, y, width, height = 290, 225, 40, 30
+        x, y, width, height = 295, 225, 40, 30
 
         parking_box_surface = pygame.Surface((width, height), pygame.SRCALPHA)
         parking_box_color = (255, 255, 255, 128)
@@ -153,35 +137,21 @@ class Environment:
     def distance_to_parking_spot(self, car_position, parking_spot_position):
         return np.linalg.norm(car_position - parking_spot_position)
 
-    def global_rotation_error(self, car_rotation, tangent_rotation):
-        error = abs(car_rotation - tangent_rotation) % 360
-        if error > 180:
-            error = 360 - error
-        return error
-
     def reset(self):
-        # Reset car position and angle
         self.car.x = self.screen_width/2 + 40
         self.car.y = self.screen_height - 250
         self.car.angle = 0
 
-        # Return initial state
         state = np.array([self.car.x, self.car.y, self.car.angle])
         return state
 
     def distance_to_bezier(self, x, y):
-        P0 = (240, 350)
-        P1 = (240, 290)
-        P2 = (280, 260)
-        P3 = (310, 245)
-        P4 = (310, 230)
-
         num_points = 100
         min_distance = float('inf')
 
         for i in range(num_points):
             t = i / (num_points - 1)
-            point = self.bezier_point(t, P0, P1, P2, P3, P4)
+            point = self.bezier_point(t, self.P0, self.P1, self.P2, self.P3, self.P4)
             distance = math.sqrt((x - point[0]) ** 2 + (y - point[1]) ** 2)
             if distance < min_distance:
                 min_distance = distance
@@ -191,53 +161,35 @@ class Environment:
         acceleration = 0
         angle = self.car.angle
         if action == 0:
-            acceleration += 1.25
+            acceleration += 2
         elif action == 1:
-            acceleration -= 0.75
+            acceleration -= 2
         elif action == 2:
-            angle += 3
+            angle += 5
         elif action == 3:
-            angle -= 3
+            angle -= 5
 
         self.car.acceleration = acceleration
         self.car.angle = angle
         self.car.update()
         boundary_hit = self.car.handle_boundary()
-        # Calculate next states
+
         state = np.array([self.car.x, self.car.y, self.car.angle])
 
-        target_x, target_y = 310, 240
+        target_x, target_y = 315, 240
   
         prev_distance = math.sqrt((self.car.prev_x - target_x)**2 + (self.car.prev_y - target_y)**2)
         distance = math.sqrt((self.car.x - target_x)**2 + (self.car.y - target_y)**2)
 
         in_lane = 215 <= self.car.x
-        in_right_parking_space = (self.car.x >= 290) and (self.car.x <= 330) and (self.car.y >= 200) and (self.car.y <= 280) and (-20 <= abs(self.car.angle % 360) <= 20)
+        in_right_parking_space = (self.car.x >= 285) and (self.car.x <= 345) and (self.car.y >= 210) and (self.car.y <= 270) and (-10 <= abs(self.car.angle % 360) <= 10)
         in_wrong_parking_space_right = ((self.car.x >= 260) and (self.car.x <= 300) and (((self.car.y >= 40) and (self.car.y <= 200)) or ((self.car.y >= 285) and (self.car.y <= 560))))
 
-        # Constants for reward calculation
         p = 500
         crash_penalty = -300
         time_penalty = -1
-        movement_penalty = 0.75
-        # smoothness_penalty = -2
-        # direction_penalty = -2
+        movement_penalty = 2
 
-        # Calculate angular velocity
-        # angular_velocity = abs(self.car.angle - self.car.prev_angle)
-
-        # Calculate rotation difference
-        # parking_rotation = 0
-        # rotation_difference = abs(self.car.angle - parking_rotation)
-
-        # Calculate the direction to the target
-        target_dir = math.atan2(target_y - self.car.y, target_x - self.car.x)
-        direction_diff = abs(target_dir - self.car.angle)
-
-        # Normalize the difference to be between -pi and pi
-        direction_diff = ((direction_diff + math.pi) % (2 * math.pi)) - math.pi
-
-        # Calculate reward
         reward = 0
         done = False
         if in_right_parking_space:
@@ -257,7 +209,7 @@ class Environment:
         return state, reward, done
     
     def render(self, mode='human'):
-        self.draw(self.car, 0, 0)
+        self.draw(self.car)
     
     def run(self):
         clock = pygame.time.Clock()
@@ -274,7 +226,7 @@ class Environment:
             action = np.random.choice(4)
             next_state, reward, dones = self.step(action)
 
-            self.draw(self.car, 0, 0)
+            self.draw(self.car)
             state = next_state
 
             if all(dones):
@@ -282,7 +234,6 @@ class Environment:
                 self.reset()
 
             clock.tick(fps)
-        # Quit Pygame
         pygame.quit()
     
     def quit(self):
