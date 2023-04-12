@@ -8,12 +8,12 @@ from parallel_parking import Environment
 class ParkingEnv(Environment):
     def __init__(self):
         pygame.init()
-
         self.screen_width = 400
         self.screen_height = 600   
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.bg_color = (230, 230, 230)
         self.car = Car(self.screen, self.screen_width/2 + 40, self.screen_height - 250)
+        self.distance_to_bezier_curve = 0
 
         # Draw parked cars
         self.parked_car1 = ParkedCar(self.screen, 340, 195, -90)
@@ -109,7 +109,9 @@ class ParkingEnv(Environment):
         y = (1 - t) ** 2 * P0[1] + 2 * (1 - t) * t * P1[1] + t ** 2 * P2[1]
         return (x, y)
     
-    def distance_to_bezier(self, x, y):
+    @property
+    def distance_to_bezier(self):
+        x, y = self.car.x, self.car.y
         num_points = 100
         min_distance = float('inf')
 
@@ -148,7 +150,6 @@ class ParkingEnv(Environment):
         prev_distance = math.sqrt((self.car.prev_x - target_x)**2 + (self.car.prev_y - target_y)**2)
         distance = math.sqrt((self.car.x - target_x)**2 + (self.car.y - target_y)**2)
 
-        in_lane = 215 <= self.car.x
         in_right_parking_space = (self.car.x >= 320) and (self.car.x <= 355) and (self.car.y >= 260) and (self.car.y <= 270) and (84 <= abs(self.car.angle) % 360 <= 96)
         in_wrong_parking_space_right = ((self.car.x >= 260) and (self.car.x <= 400) and (((self.car.y >= 160) and (self.car.y <= 240)) or ((self.car.y >= 290) and (self.car.y <= 425))))
 
@@ -169,7 +170,7 @@ class ParkingEnv(Environment):
             reward = p
             print("parked")
             done = True
-        elif self.distance_to_bezier(self.car.x, self.car.y) > 15:
+        elif self.distance_to_bezier > 15:
             reward = crash_penalty
             done = True
         elif boundary_hit:

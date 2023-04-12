@@ -157,7 +157,6 @@ class Environment:
         self.car.angle = angle
         self.car.update()
         boundary_hit = self.car.handle_boundary()
-
         state = np.array([self.car.x, self.car.y, self.car.angle])
 
         target_x, target_y = 315, 240

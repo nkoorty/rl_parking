@@ -35,7 +35,7 @@ class CustomParkingEnvironment(gym.Env):
         self.env.render()  
 
 def main():
-    file = "parallel_61_ppo"
+    file = "parallel_63_ppo"
     env = make_vec_env(CustomParkingEnvironment, n_envs=1)
 
     hyperparams = {
@@ -58,7 +58,7 @@ def main():
         model = PPO("MlpPolicy", env, verbose=1, **hyperparams, tensorboard_log="data/")
 
     total_episodes = 5000
-    total_timesteps = 100000
+    total_timesteps = 150000
 
     log_dir = "data/"
     os.makedirs(log_dir, exist_ok=True)

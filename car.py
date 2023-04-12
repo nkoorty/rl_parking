@@ -40,7 +40,6 @@ class Car:
         elif self.speed < self.min_speed:
             self.speed = self.min_speed
 
-        # Update position
         angle_radians = math.radians(self.angle)
         new_x = self.x + self.speed * math.sin(-angle_radians)
         new_y = self.y - self.speed * math.cos(angle_radians)

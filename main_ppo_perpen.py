@@ -3,8 +3,8 @@ import csv
 import gym
 import numpy as np
 import pygame
+import tensorflow as tf
 from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.env_util import make_vec_env
 from perpen_parking import ParkingEnv
 
@@ -36,7 +36,7 @@ class CustomParkingEnvironment(gym.Env):
         self.env.render()  
 
 def main():
-    file = "perpen_19_ppo"
+    file = "perpen_24_ppo"
     env = make_vec_env(CustomParkingEnvironment, n_envs=1)
 
     hyperparams = {
