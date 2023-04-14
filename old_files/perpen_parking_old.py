@@ -3,7 +3,7 @@ import numpy as np
 import math
 from car import Car
 from parked_car import ParkedCar
-from parallel_parking import Environment
+from old_files.parallel_parking_old import Environment
 
 class ParkingEnv(Environment):
     def __init__(self):
@@ -177,8 +177,6 @@ class ParkingEnv(Environment):
             reward = crash_penalty
             print("collided")
             done = True
-        elif direction_diff > 10:
-            reward -= 0.5
         else:
             reward += time_penalty
             if distance < prev_distance:

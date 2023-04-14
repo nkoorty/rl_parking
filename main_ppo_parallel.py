@@ -6,7 +6,7 @@ import pygame
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.env_util import make_vec_env
-from parallel_parking import Environment
+from old_files.parallel_parking_old import Environment
 
 class CustomParkingEnvironment(gym.Env):
     def __init__(self):
