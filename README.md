@@ -10,7 +10,7 @@ Make sure you have [Anaconda](https://www.anaconda.com/) locally installed. In o
 ```
 conda env create -f environment.yml
 ```
-This installs the necessary libraries and Python 3.8, which enables us to harness TensorFlow. Upon installing all the dependencies, activate the environment using
+This installs the necessary libraries and Python 3.8, which enables us to harness Stable Baselines 3. Upon installing all the dependencies, activate the environment using
 ```
 conda activate sprl
 ```
