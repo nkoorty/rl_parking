@@ -6,7 +6,7 @@ Implemented using PyGame, PyTorch, and Stable Baselines 3. The RL algorithm of c
 
 
 ## Installation
-Make you have [Anaconda](https://www.anaconda.com/) locally installed. In order to install the necessary dependencies, run the following command 
+Make sure you have [Anaconda](https://www.anaconda.com/) locally installed. In order to install the necessary dependencies, run the following command 
 ```
 conda env create -f environment.yml
 ```
