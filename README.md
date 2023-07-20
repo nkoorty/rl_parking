@@ -14,3 +14,6 @@ This installs the necessary libraries and Python 3.8, which enables us to harnes
 ```
 conda activate sprl
 ```
+
+## Information
+Project received an overall grade of 78% (First Class Honours).
