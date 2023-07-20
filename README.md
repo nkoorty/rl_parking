@@ -16,4 +16,4 @@ conda activate sprl
 ```
 
 ## Information
-Project received an overall grade of 78% (First Class Honours).
+Project received a First Class Honours.
